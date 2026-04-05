@@ -1,0 +1,6 @@
+module hamm_encoder (
+    input[3:0] data_in, output[6:0] data_out);
+    
+    wire d0, d1, d2, d3;  //cables internos para los bits de información
+
+    wire p1, p2, p3;  //cables internos para bits de paridad
