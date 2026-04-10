@@ -1,7 +1,7 @@
 
 //Como input se recibe el mensaje de 4 bits y como output genera un código de hamming con 4 bits de información y 3 de paridad
 module hamm_encoder (
-    input[3:0] data_in, output[6:0] data_out);  // porque se trabaja con Hamming (7,4)
+    input wire [3:0] data_in, output[6:0] data_out);  // porque se trabaja con Hamming (7,4)
 
     wire d0, d1, d2, d3;  //cables internos para los bits de información
 

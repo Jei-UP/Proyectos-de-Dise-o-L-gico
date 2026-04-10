@@ -1,0 +1,46 @@
+module corrector_error (
+    input wire [6:0] recibido,  //código de Hamming recibido del transmisor del otro grupo
+    input wire [2:0] sindrome ; //Nos permite detectar la posición del error en el código
+    output wire [6:0] dato_corregido ); // Código corregido
+
+
+    //definimos s2, s1, y s0
+    wire s2 = sindrome[2];
+    wire s1 = sindrome[1];
+    wire s0 = sindrome[0];
+
+
+    //Lógica del decoder de 3 a 8 (por 2^3)
+    wire y1 = !s2 & !s1 & s0;    //Posición 1
+    wire y2 = !s2 & s1 & !s0;    // Posición 2
+    wire y3 = !s2 & s1 & s0;    // Posición 3 (D0)
+    wire y4 = s2 & !s1 & !s0;   // Posición 4
+    wire y5 = s2 & !s1 & s0;   // Posición 5 (D1)
+    wire y6 = s2 & s1 & !s0;    // Posición 6 (D2)
+    wire y7 = s2 & s1 & s0;     // Posición 7 (D3)
+
+
+    //Ahora hacemos los XORs para para eliminar el error en el código
+    wire [6:0] limpio;
+    assign limpio[0] = recibido[0] ^ y1;
+    assign limpio[1] = recibido[1] ^ y2;
+    assign limpio[2] = recibido[2] ^ y3;
+    assign limpio[3] = recibido[3] ^ y4;
+    assign limpio[4] = recibido[4] ^ y5;
+    assign limpio[5] = recibido[5] ^ y6;
+    assign limpio[6] = recibido[6] ^ y7;
+
+    //Por último extraemos datos finales
+    assign dato_corregido = {limpio[6], limpio[5], limpio[4], limpio[2]};
+
+
+endmodule
+
+
+
+
+
+
+
+    
+endmodule

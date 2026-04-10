@@ -1,8 +1,8 @@
 // Se le "inyecta" un error al código de Hamming para probar la detección de errores del receptor de otro grupo
 
 module inyector_error (
-    input wire [6:0] msj_puro; //Código generado en hamm_encoder
-    input wire [2:0] sw_error; //switches de posición (S2, S1 o S0)
+    input wire [6:0] msj_puro, //Código generado en hamm_encoder
+    input wire [2:0] sw_error, //switches de posición (S2, S1 o S0)
     output wire [6:0] msj_con_error);
 
 
