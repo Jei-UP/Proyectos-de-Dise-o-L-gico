@@ -4,7 +4,7 @@ module corrector_error (
     output wire [6:0] dato_corregido ); // Código corregido
 
 
-    //definimos s2, s1, y s0
+    //definimos s2, s1, y s0 desde el bus
     wire s2 = sindrome[2];
     wire s1 = sindrome[1];
     wire s0 = sindrome[0];
