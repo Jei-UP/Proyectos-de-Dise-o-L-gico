@@ -2,7 +2,7 @@
 //Módulo que toma el mensaje recibido y calcula la paridad de estos para luego enviarlos al corrector
 
 module decoder_paridad (
-    input wire [6:0],    //R7 a R1
+    input wire [6:0] recibido,    //R7 a R1
     output wire [2:0] pos_error);  //s2, s1 y s0
 
 
