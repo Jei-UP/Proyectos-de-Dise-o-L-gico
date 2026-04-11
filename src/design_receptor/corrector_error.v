@@ -1,7 +1,7 @@
 module corrector_error (
     input wire [6:0] recibido,  //código de Hamming recibido del transmisor del otro grupo
-    input wire [2:0] sindrome ; //Nos permite detectar la posición del error en el código
-    output wire [6:0] dato_corregido ); // Código corregido
+    input wire [2:0] sindrome, //Nos permite detectar la posición del error en el código
+    output wire [3:0] dato_corregido ); // Código corregido
 
 
     //definimos s2, s1, y s0 desde el bus

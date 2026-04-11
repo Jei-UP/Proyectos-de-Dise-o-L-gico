@@ -15,18 +15,18 @@ SOURCES := $(wildcard ../design/*.v ../design/*.sv) #Todas las fuentes .v o .sv 
 
 #Fuente de simulacion
 #aca va el testbench que quieran simular
-TESTBENCH = ../sim/TB.sv
+TESTBENCH = ../sim/top_tb.sv
 
 # Constraints para el proyecto
 #aca va el archivo de constraints del proyecto
-CONSTRAINTS = ../constr/CONSTRAINTS.cst
+CONSTRAINTS = ../constr/tangnano9k_constraints_template.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
-TOP_DESIGN = 
-TOP_TB     = 
+TOP_DESIGN = top_module
+TOP_TB     = top_tb
 
 #nombre del vcd que va a generar el tb
-VCD_FILE = 
+VCD_FILE = hamming_system.vcd
 
 
 all: synth pnr bitstream load

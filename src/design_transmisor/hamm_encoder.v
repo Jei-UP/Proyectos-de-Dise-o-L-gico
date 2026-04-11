@@ -15,6 +15,6 @@ module hamm_encoder (
 
     //Asignamos el output del código de Hamming. Este va en el orden:
     // d3 | d2 | d1 | p3 | d0 | p2 | p1 |
-    assign data_out = {data_in[3], data_in[2], datos[1], p3, datos[0], p2, p1};
+    assign data_out = {data_in[3], data_in[2], data_in[1], p3, data_in[0], p2, p1};
 
 endmodule
