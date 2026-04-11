@@ -1,4 +1,4 @@
-module 7_seg_trans (
+module recep_7_seg (
     input wire [3:0] datos,  // datos D2, D2, D1 Y D0
     output wire [6:0] seg_7 ///a, b, c, d, e, f, g
     );
