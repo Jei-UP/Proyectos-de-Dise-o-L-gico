@@ -2,6 +2,7 @@ module top_trans (
     //inputs
     input wire [2:0] sw_error, //switches para inyectar error;
     input wire [3:0] data_in, //datos de 4 bits para generar el código de Hamming
+    
     //outputs
     output wire [6:0] data_out, //Código de Hamming generado
     output wire [6:0] data_con_error, //Código de Hamming con error inyectado
@@ -22,9 +23,9 @@ module top_trans (
     );          
 
     //Instanciamos el decodificador para el display de 7 segmentos
-    decodificador_7seg decodificador (
-        .data_in(data_con_error),
-        .data_out(seg_7)
+    trans_7_seg decodificador (
+        .datos(data_con_error),
+        .seg_7(seg_7)
     );
 
 
