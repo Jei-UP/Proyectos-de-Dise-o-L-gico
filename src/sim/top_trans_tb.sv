@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module hamm_encoder_tb();
+module top_trans_tb();
 
     // Señales del test bench
     reg [3:0] data_in;
@@ -115,8 +115,8 @@ module hamm_encoder_tb();
     
     // Generación de forma de onda (para quienes usen GTKWave o similar)
     initial begin
-        $dumpfile("hamm_encoder_tb.vcd");
-        $dumpvars(0, hamm_encoder_tb);
+        $dumpfile("top_trans_tb.vcd");
+        $dumpvars(0, top_trans_tb);
     end
 
 endmodule
