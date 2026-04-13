@@ -19,14 +19,14 @@ TESTBENCH = ../sim/top_tb.sv
 
 # Constraints para el proyecto
 #aca va el archivo de constraints del proyecto
-CONSTRAINTS = ../constr/tangnano9k_constraints_template.cst
+CONSTRAINTS = ../constr/modulo_pines.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
-TOP_DESIGN = top_module
-TOP_TB     = top_tb
+TOP_DESIGN = top_trans
+TOP_TB     = top_t
 
 #nombre del vcd que va a generar el tb
-VCD_FILE = hamming_system.vcd
+VCD_FILE = hamming_system
 
 
 all: synth pnr bitstream load
