@@ -35,12 +35,3 @@ module corrector_error (
 
 
 endmodule
-
-
-
-
-
-
-
-    
-endmodule

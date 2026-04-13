@@ -23,7 +23,7 @@ CONSTRAINTS = ../constr/modulo_pines.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
 TOP_DESIGN = top_trans
-TOP_TB     = top_t
+TOP_TB     = top_tb
 
 #nombre del vcd que va a generar el tb
 VCD_FILE = hamming_system
