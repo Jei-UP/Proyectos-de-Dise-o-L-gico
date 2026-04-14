@@ -23,6 +23,6 @@ module top_trans (
         .seg_7(seg_7)
     );
 
-// assign seg_7 = 7'b1111111;
+// assign seg_7 = 7'b111111;
 
 endmodule
