@@ -8,7 +8,6 @@ module recep_7_seg (
     d1 = datos[1],
     d0 = datos[0];
 
-
     assign seg_7[0] = (!d2 & !d0) | 
                     (d3 & !d0) | 
                     (d2 & d1) | 

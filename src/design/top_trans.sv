@@ -19,8 +19,10 @@ module top_trans (
     );
 
     trans_7_seg decodificador (
-        .datos(ham_msg_error[3:0]),
+        .datos(data_in[3:0]),
         .seg_7(seg_7)
     );
+
+// assign seg_7 = 7'b1111111;
 
 endmodule
