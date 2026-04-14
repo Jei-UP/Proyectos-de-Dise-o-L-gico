@@ -47,17 +47,17 @@ Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la pa
 
 ### 3.2 Diagramas de bloques de cada subsistema
 
-**Subsistema 1:** Prepara una referencia de cómo debería lucir la palabra codificada si no hubiera errores.
+**Subsistema 1:** 
 ![Diagrama Hamming](./images/diagramas/hamming.jpeg)
 
-**Subsistema 2:** Localiza en qué bit está el error (si lo hay).
+**Subsistema 2:** 
 ![Diagrama Decodificador](./images/diagramas/decodificador.jpeg)
 
 **Subsistema 3:** 
 ![Diagrama Corrector](./images/diagramas/corrector.jpeg)
 
-**Subsistema 4:** Reconstruye los datos originales corrigiendo un error simple.
+**Subsistema 4:** 
 ![Diagrama Inyector](./images/diagramas/inyector.jpeg)
 
-**Subsistema 5:** Despliega la palabra corregida y apaga LEDs si hubo error doble.
+**Subsistema 5:** 
 ![Diagrama Binario a 7 Segmentos](./images/diagramas/bin_a_7seg.jpeg)
