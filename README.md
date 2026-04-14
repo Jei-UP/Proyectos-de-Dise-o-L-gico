@@ -14,9 +14,7 @@ https://www.youtube.com/watch?v=AKO-SaOM7BA.
 
 [4] razavi b. (2013) fundamentals of microelectronics. segunda edición. john wiley & sons
 
-## 3. Desarrollo
-
-### 3.0 Descripción general del sistema
+## 3. Descripción general del sistema
 
 El circuito incluye un sistema digital de trasmisión y recepción de datos con detección y correción de un error. Se basa en el código Hamming (7, 4).
 
@@ -45,7 +43,7 @@ Entra la palabra de 4 bits y se encarga de implementar las ecuaciones booleanas 
 Entra la palabra corregida de 4 bits.
 Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la palabra es 0000, todos los LEDs estarán apagados.
 
-### 3.2 Diagramas de bloques de cada subsistema
+## 4. Diagramas de bloques de cada subsistema
 
 **Subsistema 1:** 
 ![Diagrama Hamming](./images/diagramas/hamming.jpeg)
@@ -61,3 +59,5 @@ Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la pa
 
 **Subsistema 5:** 
 ![Diagrama Binario a 7 Segmentos](./images/diagramas/bin_a_7seg.jpeg)
+
+## 5. 
