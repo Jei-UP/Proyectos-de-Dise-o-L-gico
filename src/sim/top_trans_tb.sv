@@ -41,7 +41,7 @@ module top_trans_tb;
         
         // Archivo de resultados
         $dumpfile("top_trans_tb.vcd");
-        $dumpvars(0, tb_inyector_error);
+        $dumpvars(0, top_trans_tb);
         
         // Prueba para cada posible mensaje de entrada (4 bits = 16 combinaciones)
         for (i = 0; i < NUM_PRUEBAS; i = i + 1) begin
