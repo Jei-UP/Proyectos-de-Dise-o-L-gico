@@ -1,0 +1,46 @@
+IO_LOC  "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+IO_LOC  "sw_error[0]" 3;
+IO_PORT "sw_error[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "sw_error[1]" 4;
+IO_PORT "sw_error[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "sw_error[2]" 5;
+IO_PORT "sw_error[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[0]" 27;
+IO_PORT "data_in[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[1]" 28;
+IO_PORT "data_in[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[2]" 29;
+IO_PORT "data_in[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[3]" 30;
+IO_PORT "data_in[3]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[0]" 51;
+IO_PORT "seg_7[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[1]" 42;
+IO_PORT "seg_7[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[2]" 55;
+IO_PORT "seg_7[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[3]" 54;
+IO_PORT "seg_7[3]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[4]" 53;
+IO_PORT "seg_7[4]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[5]" 57;
+IO_PORT "seg_7[5]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "seg_7[6]" 56;
+IO_PORT "seg_7[6]" IO_TYPE=LVCMOS33;
+
+IO_PORT "*" IO_TYPE=LVCMOS33;
