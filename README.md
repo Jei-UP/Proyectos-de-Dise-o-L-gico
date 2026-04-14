@@ -44,3 +44,20 @@ Entra la palabra de 4 bits y se encarga de implementar las ecuaciones booleanas 
 6) Despliegue en LEDs
 Entra la palabra corregida de 4 bits.
 Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la palabra es 0000, todos los LEDs estarán apagados.
+
+### 3.2 Diagramas de bloques de cada subsistema
+
+**Subsistema 1:** Prepara una referencia de cómo debería lucir la palabra codificada si no hubiera errores.
+![Diagrama Hamming](./images/diagramas/hamming.jpeg)
+
+**Subsistema 2:** Localiza en qué bit está el error (si lo hay).
+![Diagrama Decodificador](./images/diagramas/decodificador.jpeg)
+
+**Subsistema 3:** 
+![Diagrama Corrector](./images/diagramas/corrector.jpeg)
+
+**Subsistema 4:** Reconstruye los datos originales corrigiendo un error simple.
+![Diagrama Inyector](./images/diagramas/inyector.jpeg)
+
+**Subsistema 5:** Despliega la palabra corregida y apaga LEDs si hubo error doble.
+![Diagrama Binario a 7 Segmentos](./images/diagramas/bin_a_7seg.jpeg)
