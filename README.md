@@ -73,6 +73,12 @@ En la simulación se lograron obtener los resultados deseados. Se logra pasar un
 El sistema tiene una alta eficiencia. Al ser un diseño combinacional, el uso de LUTs es mínimo y se limita a la implementación de ecuaciones de Hamming y decodificadores. Se prioriza el uso de pines físicos para interconectar las placas.
 El consumo energético es muy bajo. Esto se debe a que los procesos son muy sencillos y no se opera con frecuencias elevadas.
 
+## 7. Errores y Problemas encontrados
+Hubo poco conocimiento previo del lenguaje de programación para FPGA.
+Durante las pruebas, algunos segmentos no encendían correctamente, lo que se debió a una mala asignación de pines en el archivo de constraints o a conexiones incorrectas en la protoboard.
+Aunque el código estaba correcto, la relación entre cada bit de salida y el segmento físico no coincidía inicialmente, lo que generó resultados visuales incorrectos.
+Debido a la combinación de hardware (FPGA + protoboard) y software (Verilog), fue necesario invertir más tiempo en pruebas y correcciones para lograr el funcionamiento completo del sistema.
+
 
 ## 8. Abreviaturas y definiciones
 - **FPGA**: Field Programmable Gate Arrays
