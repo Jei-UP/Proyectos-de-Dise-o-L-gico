@@ -1,22 +1,6 @@
 # Proyecto corto I: Diseño digital combinacional en dispositivos programables
 
-## 1. Abreviaturas y definiciones
-- **FPGA**: Field Programmable Gate Arrays
-
-## 2. Referencias
-[0] David Harris y Sarah Harris. *Digital Design and Computer Architecture. RISC-V Edition.* Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
-
-[1] David Medina. Video tutorial para principiantes. Flujo abierto para TangNano 9k. Jul. de 2024. url:
-https://www.youtube.com/watch?v=AKO-SaOM7BA.
-
-[2] David Medina. Wiki tutorial sobre el uso de la TangNano 9k y el flujo abierto de herramientas. Mayo de
-2024. url: https://github.com/DJosueMM/open_source_fpga_environment/wiki
-
-[4] razavi b. (2013) fundamentals of microelectronics. segunda edición. john wiley & sons
-
-## 3. Desarrollo
-
-### 3.0 Descripción general del sistema
+## 1. Descripción general del sistema
 
 El circuito incluye un sistema digital de trasmisión y recepción de datos con detección y correción de un error. Se basa en el código Hamming (7, 4).
 
@@ -45,7 +29,7 @@ Entra la palabra de 4 bits y se encarga de implementar las ecuaciones booleanas 
 Entra la palabra corregida de 4 bits.
 Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la palabra es 0000, todos los LEDs estarán apagados.
 
-### 3.2 Diagramas de bloques de cada subsistema
+## 2. Diagramas de bloques de cada subsistema
 
 **Subsistema 1:** 
 ![Diagrama Hamming](./images/diagramas/hamming.jpeg)
@@ -61,3 +45,39 @@ Enciende los LEDs correspondientes dependiendo de la palabra corregida. Si la pa
 
 **Subsistema 5:** 
 ![Diagrama Binario a 7 Segmentos](./images/diagramas/bin_a_7seg.jpeg)
+
+## 3. Ejemplo de Simplificación del Circuito Corrector
+
+La lógica del corrector se basa un un decodificador de 3 a 8 que activa la inversión del bit correspondiente.
+Un ejemplo de la simplificación booleana para la corrección del Bit 7 (D3) se presenta a continuación:
+$$Y_7 = S_2 \cdot S_1 \cdot S_0$$
+Donde $Y_7$ es la señal que activa la compuerta XOR encargada de corregir el bit en la posición 7 cuando se detecta una falla.
+
+## 4. Ejemplo de Simplificación del Decodificador de 7 Segmentos
+
+A partir de los Mapas K diseñados, se simplificaron las ecuaciones para cada segmento. Para el **Segmento A**, la ecuación es:
+$$A = (\overline{D_2} \cdot \overline{D_0}) + (D_3 \cdot \overline{D_0}) + (D_2 \cdot D_1) + (\overline{D_3} \cdot D_1) + (D_3 \cdot \overline{D_2} \cdot \overline{D_1}) + (\overline{D_3} \cdot D_2 \cdot D_0)$$
+
+![Mapa K Segmento A](./images/mapasK/SegmentoA.jpeg)
+
+## 5. Ejemplo y Análisis de Simulación
+
+## 6. Análisis de consumo de recursos en la FPGA
+
+
+
+
+
+## 8. Abreviaturas y definiciones
+- **FPGA**: Field Programmable Gate Arrays
+
+## 9. Referencias
+[0] David Harris y Sarah Harris. *Digital Design and Computer Architecture. RISC-V Edition.* Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
+
+[1] David Medina. Video tutorial para principiantes. Flujo abierto para TangNano 9k. Jul. de 2024. url:
+https://www.youtube.com/watch?v=AKO-SaOM7BA.
+
+[2] David Medina. Wiki tutorial sobre el uso de la TangNano 9k y el flujo abierto de herramientas. Mayo de
+2024. url: https://github.com/DJosueMM/open_source_fpga_environment/wiki
+
+[4] razavi b. (2013) fundamentals of microelectronics. segunda edición. john wiley & sons
