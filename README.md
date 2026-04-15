@@ -62,10 +62,16 @@ $$A = (\overline{D_2} \cdot \overline{D_0}) + (D_3 \cdot \overline{D_0}) + (D_2 
 
 ## 5. Ejemplo y Análisis de Simulación
 
+![Test de simulación](./images/sim/maketest.jpeg)
+
+![Test del WaveForm](./images/sim/makewv.jpeg)
+
+En la simulación se lograron obtener los resultados deseados. Se logra pasar un mensaje de 4 bits a su código de Hamming respectivo. Además, se lograron crear diferentes casos donde se inyecta un error en distintas posiciones del código Hamming creado, generando el código con un error donde uno desee.
+
 ## 6. Análisis de consumo de recursos en la FPGA
 
-
-
+El sistema tiene una alta eficiencia. Al ser un diseño combinacional, el uso de LUTs es mínimo y se limita a la implementación de ecuaciones de Hamming y decodificadores. Se prioriza el uso de pines físicos para interconectar las placas.
+El consumo energético es muy bajo. Esto se debe a que los procesos son muy sencillos y no se opera con frecuencias elevadas.
 
 
 ## 8. Abreviaturas y definiciones
