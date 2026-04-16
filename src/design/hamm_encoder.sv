@@ -8,9 +8,9 @@ module hamm_encoder (
     wire p1, p2, p3;  //cables internos para bits de paridad
 
 
-    assign p1 = data_in[0] ^ data_in[1] ^ data_in[3] ; //chequea datos en posiciones 3, 5 y 7
-    assign p2 = data_in[0] ^ data_in[2] ^ data_in[3] ; //chequea datos en posiciones 3, 6 y 7
-    assign p3 = data_in[1] ^ data_in[2] ^ data_in[3]; //chequea datos en posiciones 5, 6 y 7
+    assign p1 = data_in[0] ^ data_in[1] ^ data_in[3] ; //chequea datos en posiciones 0, 1 y 3
+    assign p2 = data_in[0] ^ data_in[2] ^ data_in[3] ; //chequea datos en posiciones 0, 2 y 3
+    assign p3 = data_in[1] ^ data_in[2] ^ data_in[3]; //chequea datos en posiciones 1, 2 y 3
 
 
     //Asignamos el output del código de Hamming. Este va en el orden:
