@@ -2,12 +2,21 @@
 
 module top_recep_tb;
 
-    reg [6:0] data_in;
-    reg [6:0] data_ok;   // código Hamming válido base
+    reg [3:0] data_bin;        // dato original (4 bits)
+    wire [6:0] code_ok;        // código Hamming generado
+    reg [6:0] data_in;         // entrada al receptor (con o sin error)
+
     wire [3:0] data_out;
     wire [6:0] seg_7;
     wire [3:0] leds_out;
 
+    // Encoder auxiliar (para generar código válido)
+    hamm_encoder encoder (
+        .data_in(data_bin),
+        .data_out(code_ok)
+    );
+
+    // DUT receptor
     top_recep uut (
         .data_in(data_in),
         .data_out(data_out),
@@ -20,61 +29,85 @@ module top_recep_tb;
         $dumpfile("top_recep_tb.vcd");
         $dumpvars(0, top_recep_tb);
 
-        $display("Inicio de simulación...");
+        $display("======================================");
+        $display("TESTBENCH HAMMING CORRECTO");
+        $display("======================================");
 
         // =========================
         // CASO 1: SIN ERROR
         // =========================
-        data_ok = 7'b1001101;   // código válido
-        data_in = data_ok;
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 1 - Sin error | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        #10;
+
+        $display("CASO 1 - Sin error");
+        $display("code_ok = %b -> data_out = %b", data_in, data_out);
 
         // =========================
-        // CASO 2: ERROR en posición 1 (bit 0 Verilog)
+        // CASO 2: ERROR en p1 (bit 0 de TU encoder)
         // =========================
-        data_ok = 7'b1001101;
-        data_in = data_ok;
-        data_in[0] = ~data_in[0];   // inyección real de error
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 2 - Error en posición Hamming 1 | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        data_in[0] = ~data_in[0];   // p1
+        #10;
+
+        $display("CASO 2 - Error en p1");
+        $display("data_in = %b -> data_out = %b", data_in, data_out);
 
         // =========================
-        // CASO 3: ERROR en posición 3
+        // CASO 3: ERROR en p2
         // =========================
-        data_ok = 7'b1001101;
-        data_in = data_ok;
-        data_in[2] = ~data_in[2];
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 3 - Error en posición Hamming 3 | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        data_in[1] = ~data_in[1];   // p2
+        #10;
+
+        $display("CASO 3 - Error en p2");
+        $display("data_in = %b -> data_out = %b", data_in, data_out);
 
         // =========================
-        // CASO 4: ERROR en posición 5
+        // CASO 4: ERROR en d0
         // =========================
-        data_ok = 7'b1001101;
-        data_in = data_ok;
-        data_in[4] = ~data_in[4];
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 4 - Error en posición Hamming 5 | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        data_in[2] = ~data_in[2];   // d0
+        #10;
+
+        $display("CASO 4 - Error en d0");
+        $display("data_in = %b -> data_out = %b", data_in, data_out);
 
         // =========================
-        // CASO 5: SIN ERROR
+        // CASO 5: ERROR en p3
         // =========================
-        data_ok = 7'b0110011;
-        data_in = data_ok;
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 5 - Sin error | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        data_in[3] = ~data_in[3];   // p3
+        #10;
+
+        $display("CASO 5 - Error en p3");
+        $display("data_in = %b -> data_out = %b", data_in, data_out);
 
         // =========================
-        // CASO 6: ERROR en posición 7
+        // CASO 6: ERROR en d3
         // =========================
-        data_ok = 7'b0110011;
-        data_in = data_ok;
-        data_in[6] = ~data_in[6];
+        data_bin = 4'b1010;
         #10;
-        $display("Caso 6 - Error en posición Hamming 7 | data_in=%b -> data_out=%b", data_in, data_out);
+        data_in = code_ok;
+        data_in[6] = ~data_in[6];   // d3
+        #10;
 
-        $display("Fin de simulación");
+        $display("CASO 6 - Error en d3");
+        $display("data_in = %b -> data_out = %b", data_in, data_out);
+
+        $display("======================================");
+        $display("FIN DE SIMULACION");
+        $display("======================================");
+
         $stop;
     end
 
