@@ -1,5 +1,5 @@
 $date
-	Mon Apr 13 22:53:18 2026
+	Thu Apr 16 00:32:59 2026
 $end
 $version
 	Icarus Verilog
@@ -8,21 +8,58 @@ $timescale
 	1ps
 $end
 $scope module top_recep_tb $end
-$var wire 3 ! pos_error [2:0] $end
-$var reg 7 " recibido [6:0] $end
+$var wire 7 ! seg_7 [6:0] $end
+$var wire 4 " leds_out [3:0] $end
+$var wire 4 # data_out [3:0] $end
+$var reg 7 $ data_in [6:0] $end
 $scope module uut $end
-$var wire 7 # recibido [6:0] $end
-$var wire 1 $ s0 $end
-$var wire 1 % s1 $end
-$var wire 1 & s2 $end
-$var wire 1 ' r7 $end
-$var wire 1 ( r6 $end
-$var wire 1 ) r5 $end
-$var wire 1 * r4 $end
-$var wire 1 + r3 $end
-$var wire 1 , r2 $end
-$var wire 1 - r1 $end
-$var wire 3 . pos_error [2:0] $end
+$var wire 7 % data_in [6:0] $end
+$var wire 3 & sindrome [2:0] $end
+$var wire 7 ' seg_7 [6:0] $end
+$var wire 4 ( leds_out [3:0] $end
+$var wire 4 ) data_out [3:0] $end
+$scope module corrector $end
+$var wire 7 * recibido [6:0] $end
+$var wire 1 + y1 $end
+$var wire 1 , y2 $end
+$var wire 1 - y3 $end
+$var wire 1 . y4 $end
+$var wire 1 / y5 $end
+$var wire 1 0 y6 $end
+$var wire 1 1 y7 $end
+$var wire 3 2 sindrome [2:0] $end
+$var wire 1 3 s2 $end
+$var wire 1 4 s1 $end
+$var wire 1 5 s0 $end
+$var wire 7 6 limpio [6:0] $end
+$var wire 4 7 dato_corregido [3:0] $end
+$upscope $end
+$scope module decodificador $end
+$var wire 4 8 datos [3:0] $end
+$var wire 7 9 seg_7 [6:0] $end
+$var wire 1 : d3 $end
+$var wire 1 ; d2 $end
+$var wire 1 < d1 $end
+$var wire 1 = d0 $end
+$upscope $end
+$scope module decodificador_paridad $end
+$var wire 7 > recibido [6:0] $end
+$var wire 1 ? s0 $end
+$var wire 1 @ s1 $end
+$var wire 1 A s2 $end
+$var wire 1 B r7 $end
+$var wire 1 C r6 $end
+$var wire 1 D r5 $end
+$var wire 1 E r4 $end
+$var wire 1 F r3 $end
+$var wire 1 G r2 $end
+$var wire 1 H r1 $end
+$var wire 3 I pos_error [2:0] $end
+$upscope $end
+$scope module leds $end
+$var wire 4 J data_corregida [3:0] $end
+$var wire 4 K leds [3:0] $end
+$upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -31,118 +68,185 @@ $dumpall
 $end
 #0
 $dumpvars
-b0 .
+b1001 K
+b1001 J
+b1 I
+1H
+0G
+1F
+1E
+0D
+0C
+1B
+0A
+0@
+1?
+b1001101 >
+1=
+0<
+0;
+1:
+b1101111 9
+b1001 8
+b1001 7
+b1001100 6
+15
+04
+03
+b1 2
+01
+00
+0/
+0.
 0-
 0,
-0+
-0*
-0)
-0(
-0'
-0&
-0%
-0$
-b0 #
-b0 "
-b0 !
+1+
+b1001101 *
+b1001 )
+b1001 (
+b1101111 '
+b1 &
+b1001101 %
+b1001101 $
+b1001 #
+b1001 "
+b1101111 !
 $end
 #10000
-1&
-0%
-b100 !
-b100 .
-0$
-1-
-1*
-1(
-1'
-b1101001 "
-b1101001 #
-#20000
-0&
-0%
-b1 !
-b1 .
-1$
-0*
-0(
-0'
-b1 "
-b1 #
-#30000
-0$
-b10 !
-b10 .
-1%
-0-
-1,
-b10 "
-b10 #
-#40000
-b11 !
-b11 .
-1$
-0,
-1+
-b100 "
-b100 #
-#50000
-0%
-0$
-b100 !
-b100 .
-1&
 0+
-1*
+05
+b0 &
+b0 2
+b0 I
+0?
+b1001100 6
+0H
+b1001100 $
+b1001100 %
+b1001100 *
+b1001100 >
+#20000
+b1111111 !
+b1111111 '
+b1111111 9
+1,
+14
+0=
+b10 &
+b10 2
+b10 I
+1@
 b1000 "
+b1000 (
+b1000 K
 b1000 #
-#60000
-b101 !
-b101 .
-1$
-0*
-1)
-b10000 "
-b10000 #
-#70000
-0$
-1&
-b110 !
-b110 .
-1%
-0)
-1(
-b100000 "
-b100000 #
-#80000
-1&
-1%
-b111 !
-b111 .
-1$
-0(
-1'
-b1000000 "
-b1000000 #
-#90000
-0%
-0&
-b0 !
-b0 .
-0$
-1-
-1+
-1)
-b1010101 "
-b1010101 #
-#100000
-0&
-1%
-b10 !
-b10 .
-0$
-0)
-0'
+b1000 )
+b1000 7
+b1000 8
+b1000 J
+b1001011 6
+0F
+1H
+b1001001 $
+b1001001 %
+b1001001 *
+b1001001 >
+#30000
+b1101101 !
+b1101101 '
+b1101101 9
+0:
+0,
+11
+15
+1=
+1;
+13
+1?
 b101 "
+b101 (
+b101 K
 b101 #
-#130000
+b101 )
+b101 7
+b101 8
+b101 J
+b111 &
+b111 2
+b111 I
+1A
+b101101 6
+1C
+1F
+b1101101 $
+b1101101 %
+b1101101 *
+b1101101 >
+#40000
+1;
+b1111101 !
+b1111101 '
+b1111101 9
+0=
+1<
+0:
+00
+01
+b110 "
+b110 (
+b110 K
+b110 #
+b110 )
+b110 7
+b110 8
+b110 J
+03
+04
+05
+b110011 6
+0A
+0@
+b0 &
+b0 2
+b0 I
+0?
+0B
+1D
+0E
+0F
+1G
+b110011 $
+b110011 %
+b110011 *
+b110011 >
+#50000
+b1111101 !
+b1111101 '
+b1111101 9
+11
+0:
+0+
+b110 "
+b110 (
+b110 K
+b110 #
+b110 )
+b110 7
+b110 8
+b110 J
+13
+14
+15
+b110011 6
+1A
+1@
+b111 &
+b111 2
+b111 I
+1?
+1B
+b1110011 $
+b1110011 %
+b1110011 *
+b1110011 >
+#60000

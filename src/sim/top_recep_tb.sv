@@ -55,7 +55,7 @@ module top_recep_tb;
         $display("Caso 6 - Error bit 6 | data_in=%b -> data_out=%b", data_in, data_out);
 
         $display("Fin de simulación");
-        $stop;
+        $finish;
     end
 
 endmodule

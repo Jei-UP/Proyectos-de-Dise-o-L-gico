@@ -1,6 +1,7 @@
 module top_trans (
-    input wire [2:0] sw_error,
-    input wire [3:0] data_in,
+    input  wire [2:0] sw_error,
+    input  wire [3:0] data_in,
+    output wire [6:0] salida,   // ← esto faltaba
     output wire [6:0] seg_7
 );
 
@@ -19,10 +20,10 @@ module top_trans (
     );
 
     trans_7_seg decodificador (
-        .datos(data_in[3:0]),
+        .datos(data_in),
         .seg_7(seg_7)
     );
 
-// assign seg_7 = 7'b111111;
+    assign salida = ham_msg_error;  // ← esto faltaba
 
 endmodule

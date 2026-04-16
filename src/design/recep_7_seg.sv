@@ -27,12 +27,9 @@ module recep_7_seg (
                         (d3 & d1) | 
                         (!d3 & d0); // este es segmento C   
 
-    assign seg_7[3] = (d3 & !d1) | 
-                        (!d2 & !d1 & !d0) | 
-                        (!d2 & d1 & d0) | 
-                        (d2 & !d1 & d0) | 
-                        (!d3 & d1 & !d0) | 
-                        (d2 & d1 & !d0); //este es segmento D
+    assign seg_7[3] = (!d3 & !d1)       | (!d2 & d1 & !d0) | (!d2 & d1 & d0) |
+                  (d2 & !d1 & d0)   | (!d3 & d1 & !d0) | (d2 & d1 & !d0) |
+                  (!d3 & !d2 & !d0); // término que faltaba
 
     assign seg_7[4] = (!d2 & !d0) | 
                         (d3 & d2) |     
