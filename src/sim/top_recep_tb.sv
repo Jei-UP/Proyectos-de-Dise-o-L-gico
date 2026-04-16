@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_top_recep;
+module top_recep_tb;
 
     reg [6:0] data_in;
     wire [3:0] data_out;

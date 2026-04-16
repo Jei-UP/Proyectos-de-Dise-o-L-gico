@@ -19,9 +19,9 @@ module decoder_paridad (
     // -----------------------------
     wire s0, s1, s2;
 
-    assign s0 = r1 ^ r3 ^ r5 ^ r7;
-    assign s1 = r2 ^ r3 ^ r6 ^ r7;
-    assign s2 = r4 ^ r5 ^ r6 ^ r7;
+    assign s0 = r3 ^ r5 ^ r7;
+    assign s1 = r3 ^ r6 ^ r7;
+    assign s2 = r5 ^ r6 ^ r7;
 
     // -----------------------------
     // Salida

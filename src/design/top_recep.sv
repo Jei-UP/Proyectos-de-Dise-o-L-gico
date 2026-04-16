@@ -14,7 +14,7 @@ module top_recep (
     );
 
     //Instanciamos el decodificador para el display de 7 segmentos 
-    decodificador_7seg decodificador (
+    recep_7_seg decodificador (
         .data_in(data_out),
         .data_out(seg_7)
     );     
