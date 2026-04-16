@@ -5,14 +5,15 @@ module decoder_paridad (
 
     //Se hace un mapeo del mensaje recibido
 
-    wire r7 = recibido[6],
-    r6 = recibido[5],
-    r5 = recibido[4],
-    r4 = recbido[3],
-    r3 = recibido[2],
-    r2 = recibido[1],
-    r1 = recibido[0];
+    wire r7, r6, r5, r4, r3, r2, r1;
 
+    assign r7 = recibido[6];
+    assign r6 = recibido[5];
+    assign r5 = recibido[4];
+    assign r4 = recibido[3];
+    assign r3 = recibido[2];
+    assign r2 = recibido[1];
+    assign r1 = recibido[0];
     // -----------------------------
     // Cálculo del síndrome
     // -----------------------------
