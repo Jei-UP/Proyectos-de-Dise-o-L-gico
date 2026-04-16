@@ -1,5 +1,5 @@
 $date
-	Wed Apr 15 23:53:39 2026
+	Thu Apr 16 00:02:14 2026
 $end
 $version
 	Icarus Verilog
@@ -11,55 +11,63 @@ $scope module top_recep_tb $end
 $var wire 7 ! seg_7 [6:0] $end
 $var wire 4 " leds_out [3:0] $end
 $var wire 4 # data_out [3:0] $end
-$var reg 7 $ data_in [6:0] $end
-$var reg 7 % data_ok [6:0] $end
+$var wire 7 $ code_ok [6:0] $end
+$var reg 4 % data_bin [3:0] $end
+$var reg 7 & data_in [6:0] $end
+$scope module encoder $end
+$var wire 4 ' data_in [3:0] $end
+$var wire 1 ( p1 $end
+$var wire 1 ) p2 $end
+$var wire 1 * p3 $end
+$var wire 7 + data_out [6:0] $end
+$upscope $end
 $scope module uut $end
-$var wire 7 & data_in [6:0] $end
-$var wire 7 ' seg_7 [6:0] $end
-$var wire 3 ( pos_error [2:0] $end
-$var wire 4 ) leds_out [3:0] $end
-$var wire 4 * data_out [3:0] $end
+$var wire 7 , data_in [6:0] $end
+$var wire 7 - seg_7 [6:0] $end
+$var wire 3 . pos_error [2:0] $end
+$var wire 4 / leds_out [3:0] $end
+$var wire 4 0 data_out [3:0] $end
 $scope module corrector $end
-$var wire 7 + recibido [6:0] $end
-$var wire 1 , y1 $end
-$var wire 1 - y2 $end
-$var wire 1 . y3 $end
-$var wire 1 / y4 $end
-$var wire 1 0 y5 $end
-$var wire 1 1 y6 $end
-$var wire 1 2 y7 $end
-$var wire 3 3 sindrome [2:0] $end
-$var wire 1 4 s2 $end
-$var wire 1 5 s1 $end
-$var wire 1 6 s0 $end
-$var wire 7 7 limpio [6:0] $end
-$var wire 4 8 dato_corregido [3:0] $end
+$var wire 7 1 recibido [6:0] $end
+$var wire 1 2 y1 $end
+$var wire 1 3 y2 $end
+$var wire 1 4 y3 $end
+$var wire 1 5 y4 $end
+$var wire 1 6 y5 $end
+$var wire 1 7 y6 $end
+$var wire 1 8 y7 $end
+$var wire 3 9 sindrome [2:0] $end
+$var wire 1 : s2 $end
+$var wire 1 ; s1 $end
+$var wire 1 < s0 $end
+$var wire 7 = limpio [6:0] $end
+$var wire 4 > dato_corregido [3:0] $end
 $upscope $end
 $scope module dec_paridad $end
-$var wire 7 9 recibido [6:0] $end
-$var wire 1 : s0 $end
-$var wire 1 ; s1 $end
-$var wire 1 < s2 $end
-$var wire 1 = r7 $end
-$var wire 1 > r6 $end
-$var wire 1 ? r5 $end
-$var wire 1 @ r4 $end
-$var wire 1 A r3 $end
-$var wire 1 B r2 $end
-$var wire 1 C r1 $end
-$var wire 3 D pos_error [2:0] $end
+$var wire 7 ? recibido [6:0] $end
+$var wire 1 @ s0 $end
+$var wire 1 A s1 $end
+$var wire 1 B s2 $end
+$var wire 1 C r7 $end
+$var wire 1 D r6 $end
+$var wire 1 E r5 $end
+$var wire 1 F r4 $end
+$var wire 1 G r3 $end
+$var wire 1 H r2 $end
+$var wire 1 I r1 $end
+$var wire 3 J pos_error [2:0] $end
 $upscope $end
 $scope module decodificador $end
-$var wire 4 E datos [3:0] $end
-$var wire 7 F seg_7 [6:0] $end
-$var wire 1 G d3 $end
-$var wire 1 H d2 $end
-$var wire 1 I d1 $end
-$var wire 1 J d0 $end
+$var wire 4 K datos [3:0] $end
+$var wire 7 L seg_7 [6:0] $end
+$var wire 1 M d3 $end
+$var wire 1 N d2 $end
+$var wire 1 O d1 $end
+$var wire 1 P d0 $end
 $upscope $end
 $scope module leds $end
-$var wire 4 K data_corregida [3:0] $end
-$var wire 4 L leds [3:0] $end
+$var wire 4 Q data_corregida [3:0] $end
+$var wire 4 R leds [3:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -69,183 +77,222 @@ $dumpall
 $end
 #0
 $dumpvars
-b1001 L
-b1001 K
-1J
-0I
-0H
-1G
-b1101111 F
-b1001 E
-b1 D
-1C
-0B
-1A
-1@
-0?
-0>
-1=
-0<
-0;
-1:
-b1001101 9
-b1001 8
-b1001100 7
-16
-05
-04
-b1 3
-02
-01
-00
-0/
-0.
-0-
-1,
-b1001101 +
-b1001 *
-b1001 )
-b1 (
-b1101111 '
-b1001101 &
-b1001101 %
-b1001101 $
-b1001 #
-b1001 "
-b1101111 !
+bx R
+bx Q
+xP
+xO
+xN
+xM
+bx L
+bx K
+bx J
+xI
+xH
+xG
+xF
+xE
+xD
+xC
+xB
+xA
+x@
+bx ?
+bx >
+bx =
+x<
+x;
+x:
+bx 9
+x8
+x7
+x6
+x5
+x4
+x3
+x2
+bx 1
+bx 0
+bx /
+bx .
+bx -
+bx ,
+b1010010 +
+0*
+1)
+0(
+b1010 '
+bx &
+b1010 %
+b1010010 $
+bx #
+bx "
+bx !
 $end
 #10000
-0,
-06
-b0 (
-b0 3
-b0 D
-0:
-b1001100 7
-0C
-b1001100 $
-b1001100 &
-b1001100 +
-b1001100 9
-#20000
-b1111111 !
-b1111111 '
-b1111111 F
-1-
-15
-0J
-b10 (
-b10 3
-b10 D
-1;
-b1000 "
-b1000 )
-b1000 L
-b1000 #
-b1000 *
-b1000 8
-b1000 E
-b1000 K
-b1001011 7
-0A
-1C
-b1001001 $
-b1001001 &
-b1001001 +
-b1001001 9
-#30000
-b1111100 !
-b1111100 '
-b1111100 F
-1/
-0-
-14
+b1110111 !
+b1110111 -
+b1110111 L
+0N
+1M
+1O
+0P
+b1010 "
+b1010 /
+b1010 R
+b1010 #
+b1010 0
+b1010 >
+b1010 K
+b1010 Q
 05
-1I
-1<
-1J
-b100 (
-b100 3
-b100 D
-0;
-b1011 "
-b1011 )
-b1011 L
-b1011 #
-b1011 *
-b1011 8
-b1011 E
-b1011 K
-b1010101 7
-1?
-1A
-b1011101 $
-b1011101 &
-b1011101 +
-b1011101 9
-#40000
-b1111101 !
-b1111101 '
-b1111101 F
-1I
-0J
-1H
-0G
-0/
-00
-b110 "
-b110 )
-b110 L
-b110 #
-b110 *
-b110 8
-b110 E
-b110 K
-04
+07
+03
+b1010010 =
+08
 06
-b110011 7
-0<
-b0 (
-b0 3
-b0 D
+04
+02
 0:
-0=
-1>
-0@
+0;
+0<
+0B
 0A
-1B
-b110011 $
-b110011 &
-b110011 +
-b110011 9
-b110011 %
-#50000
-b1111101 !
-b1111101 '
-b1111101 F
-12
+b0 .
+b0 9
+b0 J
+0@
+1C
+0D
+1E
+0F
 0G
-0,
-b110 "
-b110 )
-b110 L
-b110 #
-b110 *
-b110 8
-b110 E
-b110 K
-14
-15
-16
-b110011 7
+1H
+0I
+b1010010 &
+b1010010 ,
+b1010010 1
+b1010010 ?
+#30000
+12
 1<
+b1 .
+b1 9
+b1 J
+1@
+b1010010 =
+1I
+b1010011 &
+b1010011 ,
+b1010011 1
+b1010011 ?
+#50000
+13
+02
 1;
-b111 (
-b111 3
-b111 D
+0<
+1A
+b10 .
+b10 9
+b10 J
+0@
+b1010010 =
+0H
+0I
+b1010000 &
+b1010000 ,
+b1010000 1
+b1010000 ?
+#70000
+b1110111 !
+b1110111 -
+b1110111 L
+03
+14
+1<
+0P
+b11 .
+b11 9
+b11 J
+1@
+b1010 "
+b1010 /
+b1010 R
+b1010 #
+b1010 0
+b1010 >
+b1010 K
+b1010 Q
+b1010010 =
+1G
+1H
+b1010110 &
+b1010110 ,
+b1010110 1
+b1010110 ?
+#90000
+b1110111 !
+b1110111 -
+b1110111 L
+15
+03
+04
 1:
-1=
-b1110011 $
-b1110011 &
-b1110011 +
-b1110011 9
+0;
+0<
+1B
+0P
+0A
+b100 .
+b100 9
+b100 J
+0@
+b1010 "
+b1010 /
+b1010 R
+b1010 #
+b1010 0
+b1010 >
+b1010 K
+b1010 Q
+b1010010 =
+1F
+0G
+b1011010 &
+b1011010 ,
+b1011010 1
+b1011010 ?
+#110000
+b1110111 !
+b1110111 -
+b1110111 L
+0P
+1O
+18
+04
+1M
+05
+06
+b1010 "
+b1010 /
+b1010 R
+b1010 #
+b1010 0
+b1010 >
+b1010 K
+b1010 Q
+1:
+1;
+1<
+1B
+1A
+b111 .
+b111 9
+b111 J
+1@
+b1010010 =
+0C
+0F
+b10010 &
+b10010 ,
+b10010 1
+b10010 ?
