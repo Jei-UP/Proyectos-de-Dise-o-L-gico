@@ -11,7 +11,7 @@ module decoder_paridad (
     wire r7 = recibido[6],
     r6 = recibido[5],
     r5 = recibido[4],
-    r4 = recbido[3],
+    r4 = recibido[3],
     r3 = recibido[2],
     r2 = recibido[1],
     r1 = recibido[0];
