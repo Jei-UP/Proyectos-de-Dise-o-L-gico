@@ -1,51 +1,7 @@
-
 IO_LOC  "clk" 52;
 IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-IO_LOC  "sw_error[0]" 3;
-IO_PORT "sw_error[0]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "sw_error[1]" 4;
-IO_PORT "sw_error[1]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "sw_error[2]" 5;
-
-IO_LOC  "leds[3]" 48;
-IO_PORT "leds[3]" IO_TYPE=SLVS;
-
-IO_LOC  "leds[2]" 49;
-IO_PORT "leds[2]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "leds[1]" 31;
-IO_PORT "leds[1]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "leds[0]" 32;
-IO_PORT "leds[0]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[6]" 79;
-IO_PORT "data_out[6]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[5]" 78;
-IO_PORT "data_out[5]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[4]" 77;
-IO_PORT "data_out[4]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[3]" 76;
-IO_PORT "data_out[3]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[2]" 75;
-IO_PORT "data_out[2]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[1]" 74;
-IO_PORT "data_out[1]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "data_out[0]" 73;
-IO_PORT "data_out[0]" IO_TYPE=LVCMOS33;
-
-IO_LOC  "clk" 52;
-IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-
+// Switches de posición de error
 IO_LOC  "sw_error[0]" 72;
 IO_PORT "sw_error[0]" IO_TYPE=LVCMOS33;
 
@@ -53,9 +9,9 @@ IO_LOC  "sw_error[1]" 71;
 IO_PORT "sw_error[1]" IO_TYPE=LVCMOS33;
 
 IO_LOC  "sw_error[2]" 70;
->>>>>>> 5c4ae1361e6f76c9cba978cc5208aea177722650
 IO_PORT "sw_error[2]" IO_TYPE=LVCMOS33;
 
+// Entrada de datos desde el transmisor
 IO_LOC  "data_in[0]" 27;
 IO_PORT "data_in[0]" IO_TYPE=LVCMOS33;
 
@@ -68,6 +24,52 @@ IO_PORT "data_in[2]" IO_TYPE=LVCMOS33;
 IO_LOC  "data_in[3]" 30;
 IO_PORT "data_in[3]" IO_TYPE=LVCMOS33;
 
+IO_LOC  "data_in[4]" 33;
+IO_PORT "data_in[4]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[5]" 34;
+IO_PORT "data_in[5]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_in[6]" 35;
+IO_PORT "data_in[6]" IO_TYPE=LVCMOS33;
+
+// Dato corregido hacia el selector externo
+IO_LOC  "data_out[0]" 73;
+IO_PORT "data_out[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_out[1]" 74;
+IO_PORT "data_out[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_out[2]" 75;
+IO_PORT "data_out[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "data_out[3]" 76;
+IO_PORT "data_out[3]" IO_TYPE=LVCMOS33;
+
+// Síndrome hacia el selector externo
+IO_LOC  "pos_error[0]" 25;
+IO_PORT "pos_error[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "pos_error[1]" 26;
+IO_PORT "pos_error[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "pos_error[2]" 19;
+IO_PORT "pos_error[2]" IO_TYPE=LVCMOS33;
+
+// LEDs
+IO_LOC  "leds_out[0]" 32;
+IO_PORT "leds_out[0]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "leds_out[1]" 31;
+IO_PORT "leds_out[1]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "leds_out[2]" 49;
+IO_PORT "leds_out[2]" IO_TYPE=LVCMOS33;
+
+IO_LOC  "leds_out[3]" 48;
+IO_PORT "leds_out[3]" IO_TYPE=LVCMOS33;
+
+// Display 7 segmentos
 IO_LOC  "seg_7[0]" 51;
 IO_PORT "seg_7[0]" IO_TYPE=LVCMOS33;
 
