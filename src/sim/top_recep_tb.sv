@@ -116,7 +116,7 @@ module top_recep_tb;
         data_in[6] = ~data_in[6];
         #10;
 
-        $display("\nCASO 6 - ERROR en bit 5");
+        $display("\nCASO 6 - ERROR en bit 7");
         $display("data_in        = %b", data_in);
         $display("data_out       = %b", data_out);
 
