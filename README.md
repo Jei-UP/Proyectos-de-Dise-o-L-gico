@@ -74,14 +74,14 @@ El sistema tiene una alta eficiencia. Al ser un diseño combinacional, el uso de
 El consumo energético es muy bajo. Esto se debe a que los procesos son muy sencillos y no se opera con frecuencias elevadas.
 
 ## 7. Errores y Problemas encontrados
+
 Hubo poco conocimiento previo del lenguaje de programación para FPGA.
 Durante las pruebas, algunos segmentos no encendían correctamente, lo que se debió a una mala asignación de pines en el archivo de constraints o a conexiones incorrectas en la protoboard.
 Aunque el código estaba correcto, la relación entre cada bit de salida y el segmento físico no coincidía inicialmente, lo que generó resultados visuales incorrectos.
 Debido a la combinación de hardware (FPGA + protoboard) y software (Verilog), fue necesario invertir más tiempo en pruebas y correcciones para lograr el funcionamiento completo del sistema.
 
-![image alt]()
-
 ## 8. Bitácoras
+
 - Noah Gutierrez Valerin:
 ![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_1.jpg)
 ![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_2.jpg)
@@ -89,6 +89,24 @@ Debido a la combinación de hardware (FPGA + protoboard) y software (Verilog), f
 ![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_4.jpg)
 ![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_5.jpg)
 ![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_6.jpg)
+
+-Jason Ulloa Picado:
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_jason/Bitacora_Jason_Ulloan_1.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_jason/Bitacora_Jason_Ulloan_2.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_jason/Bitacora_Jason_Ulloan_3.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_jason/Bitacora_Jason_Ulloan_4.jpg)
+
+-Andres
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.44%20PM.jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(1).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(2).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(3).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(4).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(5).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(6).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(7).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM%20(8).jpeg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/8d263bc258b2aed83040c1a482be47667bf78e37/bitacoras/bitacoras_andres/WhatsApp%20Image%202026-04-17%20at%202.11.45%20PM.jpeg)
 
 ## 9. Abreviaturas y definiciones
 - **FPGA**: Field Programmable Gate Arrays
