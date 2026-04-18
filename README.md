@@ -79,11 +79,21 @@ Durante las pruebas, algunos segmentos no encendían correctamente, lo que se de
 Aunque el código estaba correcto, la relación entre cada bit de salida y el segmento físico no coincidía inicialmente, lo que generó resultados visuales incorrectos.
 Debido a la combinación de hardware (FPGA + protoboard) y software (Verilog), fue necesario invertir más tiempo en pruebas y correcciones para lograr el funcionamiento completo del sistema.
 
+![image alt]()
 
-## 8. Abreviaturas y definiciones
+## 8. Bitácoras
+- Noah Gutierrez Valerin:
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_1.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_2.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_3.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_4.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_5.jpg)
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/4de09f352f4522c84d6e8b3c17c3682862e24290/bitacoras/bitacoras_noah/Bitacora_Noah_Guti%C3%A9rrezn_6.jpg)
+
+## 9. Abreviaturas y definiciones
 - **FPGA**: Field Programmable Gate Arrays
 
-## 9. Referencias
+## 10. Referencias
 [0] David Harris y Sarah Harris. *Digital Design and Computer Architecture. RISC-V Edition.* Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
 
 [1] David Medina. Video tutorial para principiantes. Flujo abierto para TangNano 9k. Jul. de 2024. url:
