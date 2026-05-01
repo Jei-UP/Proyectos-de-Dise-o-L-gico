@@ -11,7 +11,7 @@ module top #(
     output logic       datos_listos
 );
 
-    // PASO 3 — sincronizador
+    // PASO 3 — sincronizador de dos etapas por cada fila
     logic [3:0] filas_sync;
 
     genvar i;
@@ -25,7 +25,7 @@ module top #(
         end
     endgenerate
 
-    // PASO 4 — debounce
+    // PASO 4 — debounce por cada fila
     logic [3:0] filas_debounced;
 
     generate
@@ -76,7 +76,9 @@ module top #(
     logic [9:0] numero2;
     logic       suma_ready;
 
-    fsm_teclado fsm_inst (
+    fsm_teclado #(
+        .CICLOS_BARRIDO(CICLOS_BARRIDO)
+    ) fsm_inst (
         .clk         (clk),
         .rst         (rst),
         .tecla_valida(tecla_valida),

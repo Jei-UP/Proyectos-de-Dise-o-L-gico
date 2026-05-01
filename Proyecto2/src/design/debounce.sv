@@ -15,7 +15,11 @@ module debounce #(
             contador      <= '0;
             estado_actual <= 1'b0;
         end else begin
-            if (senal_in != estado_actual) begin
+            // Si la entrada coincide con el estado estable, no hay cambio:
+            // resetear el contador.
+            // Si difiere, contar; cuando se sostuvo el cambio LIMITE
+            // ciclos, aceptar el nuevo estado.
+            if (senal_in == estado_actual) begin
                 contador <= '0;
             end else if (contador == LIMITE - 1) begin
                 estado_actual <= senal_in;
