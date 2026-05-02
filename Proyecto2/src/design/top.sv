@@ -3,13 +3,18 @@ module top #(
     parameter CICLOS_BARRIDO  = 27_000
 )(
     input  logic       clk,
-    input  logic       rst,
+    input  logic       rst_n,        // activo en bajo: pin 4 (botón S1)
     input  logic [3:0] filas_raw,
     output logic [3:0] columnas,
     output logic [9:0] num1_reg,
     output logic [9:0] num2_reg,
     output logic       datos_listos
 );
+
+    // El botón S1 (pin 4) da 0 cuando se presiona y 1 en reposo.
+    // Invertimos para que todo el diseño interno use reset activo en alto.
+    logic rst;
+    assign rst = ~rst_n;
 
     // PASO 3 — sincronizador de dos etapas por cada fila
     logic [3:0] filas_sync;

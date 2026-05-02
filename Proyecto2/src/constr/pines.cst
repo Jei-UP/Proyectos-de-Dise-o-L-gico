@@ -1,17 +1,83 @@
-IO_LOC "col1" 25;
-IO_LOC "col2" 26;
-IO_LOC "col3" 27;
-IO_LOC "col4" 28;
-IO_LOC "row1" 29;
-IO_LOC "row2" 30;
-IO_LOC "row3" 33;
-IO_LOC "row4" 34;
+// ── Reloj y reset (conexiones internas, no están en el header GPIO) ──────────
+IO_LOC "clk"    52;   // Oscilador 27 MHz soldado en la placa
+IO_LOC "rst_n"   4;   // Botón S1 (activo en bajo: presionar = resetear)
 
-IO_PORT "col1" IO_TYPE=LVCMOS33;
-IO_PORT "col2" IO_TYPE=LVCMOS33;
-IO_PORT "col3" IO_TYPE=LVCMOS33;
-IO_PORT "col4" IO_TYPE=LVCMOS33;
-IO_PORT "row1" IO_TYPE=LVCMOS33;
-IO_PORT "row2" IO_TYPE=LVCMOS33;
-IO_PORT "row3" IO_TYPE=LVCMOS33;
-IO_PORT "row4" IO_TYPE=LVCMOS33;
+// ── Columnas: salidas hacia el teclado — lado izquierdo, IOB BANK1, 3.3V ────
+IO_LOC "columnas[0]" 25;
+IO_LOC "columnas[1]" 26;
+IO_LOC "columnas[2]" 27;
+IO_LOC "columnas[3]" 28;
+
+// ── Filas: entradas desde el teclado — lado izquierdo, IOB BANK1, 3.3V ──────
+IO_LOC "filas_raw[0]" 29;
+IO_LOC "filas_raw[1]" 30;
+IO_LOC "filas_raw[2]" 33;
+IO_LOC "filas_raw[3]" 34;
+
+// ── num1_reg[0:9] — lado izquierdo inferior (IOB/IOR, 3.3V) ─────────────────
+IO_LOC "num1_reg[0]" 35;
+IO_LOC "num1_reg[1]" 40;
+IO_LOC "num1_reg[2]" 41;
+IO_LOC "num1_reg[3]" 42;
+IO_LOC "num1_reg[4]" 51;
+IO_LOC "num1_reg[5]" 53;
+IO_LOC "num1_reg[6]" 54;
+IO_LOC "num1_reg[7]" 55;
+IO_LOC "num1_reg[8]" 56;
+IO_LOC "num1_reg[9]" 57;
+
+// ── num2_reg[0:4] — lado derecho inferior (IOR/IOB, 3.3V) ───────────────────
+IO_LOC "num2_reg[0]" 63;
+IO_LOC "num2_reg[1]" 48;
+IO_LOC "num2_reg[2]" 49;
+IO_LOC "num2_reg[3]" 31;
+IO_LOC "num2_reg[4]" 32;
+
+// ── num2_reg[5:9] y datos_listos — LEDs integrados ───────────────────────────
+// Los LEDs son activo en bajo: se ENCIENDEN cuando la señal = 0.
+// Para verificar con analizador lógico, las señales son correctas.
+IO_LOC "datos_listos"  10;   // LED0
+IO_LOC "num2_reg[5]"   11;   // LED1
+IO_LOC "num2_reg[6]"   13;   // LED2
+IO_LOC "num2_reg[7]"   14;   // LED3
+IO_LOC "num2_reg[8]"   15;   // LED4
+IO_LOC "num2_reg[9]"   16;   // LED5
+
+// ── Estándares de voltaje (todos LVCMOS33 — pines en bancos de 3.3V) ─────────
+IO_PORT "clk"    IO_TYPE=LVCMOS33;
+IO_PORT "rst_n"  IO_TYPE=LVCMOS33;
+
+IO_PORT "columnas[0]" IO_TYPE=LVCMOS33;
+IO_PORT "columnas[1]" IO_TYPE=LVCMOS33;
+IO_PORT "columnas[2]" IO_TYPE=LVCMOS33;
+IO_PORT "columnas[3]" IO_TYPE=LVCMOS33;
+
+// Sin PULL_MODE: el circuito ya tiene resistencias externas de 10K a GND
+IO_PORT "filas_raw[0]" IO_TYPE=LVCMOS33;
+IO_PORT "filas_raw[1]" IO_TYPE=LVCMOS33;
+IO_PORT "filas_raw[2]" IO_TYPE=LVCMOS33;
+IO_PORT "filas_raw[3]" IO_TYPE=LVCMOS33;
+
+IO_PORT "num1_reg[0]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[1]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[2]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[3]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[4]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[5]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[6]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[7]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[8]" IO_TYPE=LVCMOS33;
+IO_PORT "num1_reg[9]" IO_TYPE=LVCMOS33;
+
+IO_PORT "num2_reg[0]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[1]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[2]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[3]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[4]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[5]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[6]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[7]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[8]" IO_TYPE=LVCMOS33;
+IO_PORT "num2_reg[9]" IO_TYPE=LVCMOS33;
+
+IO_PORT "datos_listos" IO_TYPE=LVCMOS33;

@@ -7,7 +7,7 @@ module tb_subsistema1;
     localparam PERIODO_CLK     = 37;
 
     logic        clk;
-    logic        rst;
+    logic        rst_n;         // activo en bajo, igual que en hardware
     logic [3:0]  filas_raw;
     logic [3:0]  columnas;
     logic [9:0]  num1_reg;
@@ -19,7 +19,7 @@ module tb_subsistema1;
         .CICLOS_BARRIDO (CICLOS_BARRIDO)
     ) dut (
         .clk         (clk),
-        .rst         (rst),
+        .rst_n       (rst_n),
         .filas_raw   (filas_raw),
         .columnas    (columnas),
         .num1_reg    (num1_reg),
@@ -68,9 +68,9 @@ module tb_subsistema1;
     // Secuencia principal
     // -------------------------------------------------------
     initial begin
-        rst = 1'b1;
+        rst_n = 1'b0;           // 0 = resetear (activo en bajo)
         repeat (10) @(posedge clk);
-        rst = 1'b0;
+        rst_n = 1'b1;           // 1 = liberar reset, circuito corre
         repeat (20) @(posedge clk);
 
         $display("===========================================");
