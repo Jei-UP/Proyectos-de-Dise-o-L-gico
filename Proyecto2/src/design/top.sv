@@ -9,7 +9,11 @@ module top #(
     output logic [3:0] columnas,
     output logic [9:0] num1_reg,
     output logic [9:0] num2_reg,
-    output logic       datos_listos
+    output logic       datos_listos,
+
+    // SALIDAS PARA SUBSISTEMA 3
+    output logic [10:0] suma,
+    output logic        suma_ready
 );
 
     // =========================================================
@@ -36,9 +40,9 @@ module top #(
 
     logic suma_ready_fsm;
 
-    // SALIDA DEL SUBSISTEMA 2
-    logic [10:0] suma;
-    logic suma_ready_sum;
+    // Señales internas del subsistema 2
+    logic [10:0] suma_internal;
+    logic        suma_ready_internal;
 
     // =========================================================
     // SINCRONIZADOR
@@ -126,7 +130,7 @@ module top #(
     );
 
     // =========================================================
-    // SUBSISTEMA 2 - SUMA (TU PARTE)
+    // SUBSISTEMA 2 - SUMA
     // =========================================================
     subsistema_suma suma_inst (
         .clk(clk),
@@ -136,8 +140,14 @@ module top #(
         .num1_reg(num1_reg),
         .num2_reg(num2_reg),
 
-        .suma(suma),
-        .suma_ready(suma_ready_sum)
+        .suma(suma_internal),
+        .suma_ready(suma_ready_internal)
     );
+
+    // =========================================================
+    // SALIDAS HACIA SUBSISTEMA 3
+    // =========================================================
+    assign suma       = suma_internal;
+    assign suma_ready = suma_ready_internal;
 
 endmodule
