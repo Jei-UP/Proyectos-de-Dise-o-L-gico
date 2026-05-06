@@ -85,4 +85,10 @@ module tb_subsistema3;
         );
     end
 
+
+    initial begin
+    $dumpfile("tb_subsistema3.vcd");   // nombre del archivo
+    $dumpvars(0, tb_subsistema3);      // guarda TODAS las señales
+end
+
 endmodule
