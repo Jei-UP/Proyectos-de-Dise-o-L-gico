@@ -13,7 +13,9 @@ module top #(
 
     // SALIDAS PARA SUBSISTEMA 3
     output logic [10:0] suma,
-    output logic        suma_ready
+    output logic        suma_ready,
+    output logic [7:0] seg_7,
+    output logic [3:0] AN
 );
 
     // =========================================================
@@ -149,5 +151,59 @@ module top #(
     // =========================================================
     assign suma       = suma_internal;
     assign suma_ready = suma_ready_internal;
+
+
+
+
+    // =========================================================
+// SUBSISTEMA 3 - DISPLAY 7 SEGMENTOS
+// =========================================================
+
+// ---------- Señales internas ----------
+logic [1:0] sel;
+logic [3:0] dig_in;
+logic [15:0] suma_bcd;
+
+// ---------- Conversión BIN → BCD (simple) ----------
+integer i;
+always @(*) begin
+    suma_bcd = 0;
+
+    // Double dabble
+    for (i = 0; i < 11; i = i + 1) begin
+        if (suma_bcd[3:0]   > 4) suma_bcd[3:0]   += 3;
+        if (suma_bcd[7:4]   > 4) suma_bcd[7:4]   += 3;
+        if (suma_bcd[11:8]  > 4) suma_bcd[11:8]  += 3;
+        if (suma_bcd[15:12] > 4) suma_bcd[15:12] += 3;
+
+        suma_bcd = suma_bcd << 1;
+        suma_bcd[0] = suma[i];
+    end
+end
+
+// ---------- Instancia contador ----------
+counter scan (
+    .clk(clk),
+    .sel(sel)
+);
+
+// ---------- Selector de dígito (solo suma) ----------
+always @(*) begin
+    case (sel)
+        2'b00: dig_in = suma_bcd[3:0];
+        2'b01: dig_in = suma_bcd[7:4];
+        2'b10: dig_in = suma_bcd[11:8];
+        2'b11: dig_in = suma_bcd[15:12];
+    endcase
+end
+
+// ---------- Decodificador + display ----------
+display_7 disp (
+    .clk(clk),
+    .sel(sel),
+    .dig_in(dig_in),
+    .seg_7(seg_7),
+    .AN(AN)
+);
 
 endmodule
