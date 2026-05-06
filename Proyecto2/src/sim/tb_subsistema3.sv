@@ -15,7 +15,7 @@ module tb_subsistema3;
     // ================================
     // DUT
     // ================================
-    display_driver DUT (
+    display_7 DUT (
         .clk(clk),
         .sel(sel),
         .dig_in(dig_in),
