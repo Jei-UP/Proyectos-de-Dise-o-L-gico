@@ -165,19 +165,19 @@ logic [3:0] dig_in;
 logic [15:0] suma_bcd;
 
 // ---------- Conversión BIN → BCD (simple) ----------
-integer i;
+integer j;
 always @(*) begin
     suma_bcd = 0;
 
     // Double dabble
-    for (i = 0; i < 11; i = i + 1) begin
+    for (j = 0; j < 11; j = j + 1) begin
         if (suma_bcd[3:0]   > 4) suma_bcd[3:0]   += 3;
         if (suma_bcd[7:4]   > 4) suma_bcd[7:4]   += 3;
         if (suma_bcd[11:8]  > 4) suma_bcd[11:8]  += 3;
         if (suma_bcd[15:12] > 4) suma_bcd[15:12] += 3;
 
         suma_bcd = suma_bcd << 1;
-        suma_bcd[0] = suma[i];
+        suma_bcd[0] = suma[j];
     end
 end
 
