@@ -90,7 +90,7 @@ module tb_subsistema3;
 
 
     initial begin
-    $dumpfile("tb_subsistema3.vcd");   // nombre del archivo
+    $dumpfile("sim/tb_subsistema3.vcd");   // nombre del archivo
     $dumpvars(0, tb_subsistema3);      // guarda TODAS las señales
 end
 
