@@ -1,3 +1,8 @@
+
+
+// Modulo: registros_salida.sv
+// Descripción: Este módulo almacena los números de entrada cuando la suma está lista 
+// y genera una señal de datos_listos para indicar que los datos están disponibles para su uso en otros módulos.
 module registros_salida (
     input  logic        clk,
     input  logic        rst,

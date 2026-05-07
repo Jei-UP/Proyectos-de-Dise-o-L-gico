@@ -1,3 +1,9 @@
+
+// Modulo: digit_sel.sv
+// Descripción: Este módulo selecciona el dígito correcto de A (primero operando),
+//B (segundo operando) o S (suma)
+// según el valor de sel y mode para mostrarlo en el display de 7 segmentos.
+
 module digit_sel (
     input wire [1:0] sel,
     input wire [1:0] mode,      // 00=A, 01=B, 10=S
