@@ -4,7 +4,7 @@ module display_7 (
     input wire [3:0] dig_in,
 
     output reg [7:0] seg_7,
-    output reg [3:0] AN
+    output reg [3:0] AN   // ánodos activos en bajo
 );
 
     // -------- BCD → 7 segmentos --------
@@ -37,8 +37,8 @@ module display_7 (
         case (sel)
             2'b00: AN = 4'b1110;
             2'b01: AN = 4'b1101;
-            2'b10: AN = 4'b1011;
-            2'b11: AN = 4'b0111;
+            2'b10: AN = 4'b1011;  
+            2'b11: AN = 4'b0111; 
         endcase
     end
 

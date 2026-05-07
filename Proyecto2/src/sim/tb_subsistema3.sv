@@ -75,7 +75,10 @@ module tb_subsistema3;
     // MONITOR
     // ================================
     initial begin
-        $display("Tiempo | sel | dig_in | seg_7 | AN");
+        $display("----------------------------------------------------");
+        $display(" Tiempo | sel | dig_in |   seg_7   |   AN");
+        $display("----------------------------------------------------");
+
         $monitor("%0t | %b | %d | %b | %b",
             $time,
             sel,
