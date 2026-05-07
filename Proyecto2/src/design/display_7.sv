@@ -3,8 +3,8 @@ module display_7 (
     input wire [1:0] sel,
     input wire [3:0] dig_in,
 
-    output reg [7:0] seg_7,
-    output reg [3:0] AN   // ánodos activos en bajo
+    output reg [7:0] seg_7, // Salida para los segmentos (a-g + punto)
+    output reg [3:0] AN  // Dígitos activos (multiplexado)
 );
 
     // -------- BCD → 7 segmentos --------
