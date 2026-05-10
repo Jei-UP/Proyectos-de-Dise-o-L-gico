@@ -208,6 +208,7 @@ module top #(
     // ---------- Instancia contador de barrido ----------
     counter scan (
         .clk(clk),
+        .rst(rst),
         .sel(sel)
     );
 
