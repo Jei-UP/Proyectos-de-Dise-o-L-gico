@@ -3,8 +3,8 @@ module display_7 (
     input wire [1:0] sel,
     input wire [3:0] dig_in,
 
-    output reg [7:0] seg_7, // Salida para los segmentos (a-g + punto)
-    output reg [3:0] AN  // Dígitos activos (multiplexado)
+    output wire [7:0] seg_7, // Salida para los segmentos (a-g + punto)
+    output reg  [3:0] AN     // Dígitos activos (multiplexado)
 );
 
     // -------- BCD → 7 segmentos --------
@@ -29,18 +29,17 @@ module display_7 (
     endfunction
 
     // -------- registro de salida --------
-    always @(posedge clk) begin
-        seg_7 <= bcd_to_7seg(dig_in);
-    end
+    // Combinacional para que seg_7 y AN estén siempre sincronizados
+    assign seg_7 = bcd_to_7seg(dig_in);
 
     // -------- activación de dígitos --------
-    // Activo en BAJO: el dígito seleccionado recibe 0, los demás 1
+    // Activo en ALTO: el dígito seleccionado recibe 1
     always @(*) begin
         case (sel)
-            2'b00: AN = 4'b1110;  // dígito 0 activo
-            2'b01: AN = 4'b1101;  // dígito 1 activo
-            2'b10: AN = 4'b1011;  // dígito 2 activo
-            2'b11: AN = 4'b0111;  // dígito 3 activo
+            2'b00: AN = 4'b0001;  // dígito 0 activo
+            2'b01: AN = 4'b0010;  // dígito 1 activo
+            2'b10: AN = 4'b0100;  // dígito 2 activo
+            2'b11: AN = 4'b1000;  // dígito 3 activo
         endcase
     end
 
