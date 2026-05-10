@@ -7,7 +7,8 @@ module fsm_teclado #(
     input  logic [3:0] tecla,
     output logic [9:0] numero1,
     output logic [9:0] numero2,
-    output logic       suma_ready
+    output logic       suma_ready,
+    output logic [1:0] modo       // 00=ingresando A, 01=ingresando B, 10=suma lista
 );
 
     typedef enum logic [2:0] {
@@ -64,6 +65,18 @@ module fsm_teclado #(
     assign es_confirmar = tecla_nueva && (tecla == 4'd15);  // #
     assign es_reset     = tecla_nueva && (tecla == 4'd14);  // *
 
+    // modo: indica qué se está mostrando en el display
+    always_comb begin
+        case (estado)
+            ESPERA_NUM1,
+            CAPTURA_NUM1: modo = 2'b00;  // mostrando A
+            ESPERA_NUM2,
+            CAPTURA_NUM2: modo = 2'b01;  // mostrando B
+            LISTO:        modo = 2'b10;  // mostrando suma
+            default:      modo = 2'b00;
+        endcase
+    end
+
     always_ff @(posedge clk) begin
 
         suma_ready <= 1'b0;
@@ -87,7 +100,7 @@ module fsm_teclado #(
 
                 CAPTURA_NUM1: begin
                     if (es_digito && cant_digitos < 2'd3) begin
-                        numero1      <= (numero1 * 10) + {6'b0, tecla};
+                        numero1      <= (numero1 << 3) + (numero1 << 1) + {6'b0, tecla};
                         cant_digitos <= cant_digitos + 1;
                     end
                     if (es_confirmar) begin
@@ -106,7 +119,7 @@ module fsm_teclado #(
 
                 CAPTURA_NUM2: begin
                     if (es_digito && cant_digitos < 2'd3) begin
-                        numero2      <= (numero2 * 10) + {6'b0, tecla};
+                        numero2      <= (numero2 << 3) + (numero2 << 1) + {6'b0, tecla};
                         cant_digitos <= cant_digitos + 1;
                     end
                     if (es_confirmar) begin

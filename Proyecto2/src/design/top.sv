@@ -41,6 +41,7 @@ module top #(
     logic [9:0] numero2;
 
     logic suma_ready_fsm;
+    logic [1:0] modo;  // viene de la FSM: 00=A, 01=B, 10=suma
 
     // Señales internas del subsistema 2
     logic [10:0] suma_internal;
@@ -115,7 +116,8 @@ module top #(
         .tecla       (tecla),
         .numero1     (numero1),
         .numero2     (numero2),
-        .suma_ready  (suma_ready_fsm)
+        .suma_ready  (suma_ready_fsm),
+        .modo        (modo)
     );
 
     // =========================================================
@@ -123,6 +125,7 @@ module top #(
     // =========================================================
     registros_salida regs_inst (
         .clk          (clk),
+        .rst          (rst),          // ✔ conectado
         .suma_ready   (suma_ready_fsm),
         .numero1      (numero1),
         .numero2      (numero2),
@@ -156,54 +159,75 @@ module top #(
 
 
     // =========================================================
-// SUBSISTEMA 3 - DISPLAY 7 SEGMENTOS
-// =========================================================
+    // SUBSISTEMA 3 - DISPLAY 7 SEGMENTOS
+    // =========================================================
 
-// ---------- Señales internas ----------
-logic [1:0] sel;
-logic [3:0] dig_in;
-logic [15:0] suma_bcd;
+    // ---------- Señales internas ----------
+    logic [1:0]  sel;
+    logic [3:0]  dig_in;
+    logic [15:0] suma_bcd;
+    logic [15:0] num1_bcd;
+    logic [15:0] num2_bcd;
+    logic [15:0] bcd_activo;   // BCD que se manda al display según modo
 
-// ---------- Conversión BIN → BCD (simple) ----------
-integer j;
-always @(*) begin
-    suma_bcd = 0;
+    // ---------- Función de conversión BIN → BCD (Double Dabble) ----------
+    // Macro local como tarea que se repite para los 3 valores
+    function automatic [15:0] bin_to_bcd_11;
+        input [10:0] bin;
+        integer k;
+        reg [15:0] bcd;
+        begin
+            bcd = 0;
+            for (k = 10; k >= 0; k = k - 1) begin
+                if (bcd[3:0]   >= 5) bcd[3:0]   = bcd[3:0]   + 3;
+                if (bcd[7:4]   >= 5) bcd[7:4]   = bcd[7:4]   + 3;
+                if (bcd[11:8]  >= 5) bcd[11:8]  = bcd[11:8]  + 3;
+                if (bcd[15:12] >= 5) bcd[15:12] = bcd[15:12] + 3;
+                bcd = {bcd[14:0], bin[k]};
+            end
+            bin_to_bcd_11 = bcd;
+        end
+    endfunction
 
-    // Double dabble
-    for (j = 0; j < 11; j = j + 1) begin
-        if (suma_bcd[3:0]   > 4) suma_bcd[3:0]   += 3;
-        if (suma_bcd[7:4]   > 4) suma_bcd[7:4]   += 3;
-        if (suma_bcd[11:8]  > 4) suma_bcd[11:8]  += 3;
-        if (suma_bcd[15:12] > 4) suma_bcd[15:12] += 3;
-
-        suma_bcd = suma_bcd << 1;
-        suma_bcd[0] = suma[j];
+    always @(*) begin
+        suma_bcd = bin_to_bcd_11(suma_internal);
+        num1_bcd = bin_to_bcd_11({1'b0, numero1});  // numero1 es 10 bits
+        num2_bcd = bin_to_bcd_11({1'b0, numero2});
     end
-end
 
-// ---------- Instancia contador ----------
-counter scan (
-    .clk(clk),
-    .sel(sel)
-);
+    // ---------- Selección de qué mostrar según el modo ----------
+    always @(*) begin
+        case (modo)
+            2'b00:   bcd_activo = num1_bcd;   // ingresando A
+            2'b01:   bcd_activo = num2_bcd;   // ingresando B
+            2'b10:   bcd_activo = suma_bcd;   // resultado
+            default: bcd_activo = num1_bcd;
+        endcase
+    end
 
-// ---------- Selector de dígito (solo suma) ----------
-always @(*) begin
-    case (sel)
-        2'b00: dig_in = suma_bcd[3:0];
-        2'b01: dig_in = suma_bcd[7:4];
-        2'b10: dig_in = suma_bcd[11:8];
-        2'b11: dig_in = suma_bcd[15:12];
-    endcase
-end
+    // ---------- Instancia contador de barrido ----------
+    counter scan (
+        .clk(clk),
+        .sel(sel)
+    );
 
-// ---------- Decodificador + display ----------
-display_7 disp (
-    .clk(clk),
-    .sel(sel),
-    .dig_in(dig_in),
-    .seg_7(seg_7),
-    .AN(AN)
-);
+    // ---------- Selector de dígito ----------
+    always @(*) begin
+        case (sel)
+            2'b00: dig_in = bcd_activo[3:0];
+            2'b01: dig_in = bcd_activo[7:4];
+            2'b10: dig_in = bcd_activo[11:8];
+            2'b11: dig_in = bcd_activo[15:12];
+        endcase
+    end
+
+    // ---------- Decodificador + display ----------
+    display_7 disp (
+        .clk(clk),
+        .sel(sel),
+        .dig_in(dig_in),
+        .seg_7(seg_7),
+        .AN(AN)
+    );
 
 endmodule

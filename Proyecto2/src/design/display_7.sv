@@ -34,13 +34,13 @@ module display_7 (
     end
 
     // -------- activación de dígitos --------
-    // Solo un dígito activo a la vez (multiplexado)
+    // Activo en BAJO: el dígito seleccionado recibe 0, los demás 1
     always @(*) begin
         case (sel)
-            2'b00: AN = 4'b0001;
-            2'b01: AN = 4'b0010;
-            2'b10: AN = 4'b0100;
-            2'b11: AN = 4'b1000;
+            2'b00: AN = 4'b1110;  // dígito 0 activo
+            2'b01: AN = 4'b1101;  // dígito 1 activo
+            2'b10: AN = 4'b1011;  // dígito 2 activo
+            2'b11: AN = 4'b0111;  // dígito 3 activo
         endcase
     end
 
