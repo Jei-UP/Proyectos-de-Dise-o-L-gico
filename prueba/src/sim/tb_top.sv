@@ -1,234 +1,245 @@
 `timescale 1ns/1ps
-module keypad_scanner #(
-    parameter int CNT_W          = 20,
-    parameter int COL_HOLD_CYC   = 27000,
-    parameter int DEBOUNCE_CYC   = 540000
-)(
-    input  logic       clk,
-    input  logic       rst_n,
-    input  logic [3:0] filas_raw,
-    output logic [3:0] columnas,
-    output logic [3:0] key_code,
-    output logic       key_valid
-);
+module tb_top;
 
-    // -------------------------------------------------------------------------
-    // Sincronizacion de filas
-    // -------------------------------------------------------------------------
-    logic [3:0] filas_meta, filas_sync;
+    // ============================================================
+    // CLOCK
+    // ============================================================
+    reg clk;
 
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            filas_meta <= 4'b0000;
-            filas_sync <= 4'b0000;
-        end
-        else begin
-            filas_meta <= filas_raw;
-            filas_sync <= filas_meta;
-        end
-    end
+    initial clk = 0;
 
-    // -------------------------------------------------------------------------
-    // FSM
-    // -------------------------------------------------------------------------
-    typedef enum logic [1:0] {
-        SCAN,
-        DEBOUNCE_PRESS,
-        WAIT_RELEASE,
-        DEBOUNCE_RELEASE
-    } state_t;
+    // ~27 MHz
+    always #18.5 clk = ~clk;
 
-    state_t           state;
-    logic [1:0]       col_idx;
-    logic [CNT_W-1:0] counter;
-    logic [3:0]       captured_key;
+    // ============================================================
+    // DUT SIGNALS
+    // ============================================================
+    reg rst_n;
+    reg [3:0] filas_raw;
 
-    // -------------------------------------------------------------------------
-    // COLUMNAS
-    // -------------------------------------------------------------------------
-    always_comb begin
-        case (col_idx)
-            2'd0: columnas = 4'b0001;
-            2'd1: columnas = 4'b0010;
-            2'd2: columnas = 4'b0100;
-            2'd3: columnas = 4'b1000;
-            default: columnas = 4'b0001;
-        endcase
-    end
+    wire [3:0] columnas;
+    wire [6:0] seg_7;
+    wire [3:0] AN;
 
-    // -------------------------------------------------------------------------
-    // DECODIFICADOR
-    // -------------------------------------------------------------------------
-    function automatic logic [3:0] decode_key(
-        input logic [1:0] col,
-        input logic [3:0] rows
+    // ============================================================
+    // DUT
+    // ============================================================
+    top DUT (
+        .clk(clk),
+        .rst_n(rst_n),
+        .filas_raw(filas_raw),
+        .columnas(columnas),
+        .seg_7(seg_7),
+        .AN(AN)
     );
+
+    // ============================================================
+    // PARAMETROS
+    // ============================================================
+    parameter PRESS_TIME   = 25000000;
+    parameter RELEASE_TIME = 25000000;
+
+    // ============================================================
+    // TASK: PRESS KEY
+    // ============================================================
+    task press_key;
+
+        input [3:0] key;
+
+        reg [3:0] target_col;
+        reg [3:0] target_row;
 
         begin
 
-            decode_key = 4'h0;
+            case(key)
 
-            if (rows[0]) begin
-                case (col)
-                    2'd0: decode_key = 4'h1;
-                    2'd1: decode_key = 4'h2;
-                    2'd2: decode_key = 4'h3;
-                    2'd3: decode_key = 4'hA;
-                endcase
-            end
-            else if (rows[1]) begin
-                case (col)
-                    2'd0: decode_key = 4'h4;
-                    2'd1: decode_key = 4'h5;
-                    2'd2: decode_key = 4'h6;
-                    2'd3: decode_key = 4'hB;
-                endcase
-            end
-            else if (rows[2]) begin
-                case (col)
-                    2'd0: decode_key = 4'h7;
-                    2'd1: decode_key = 4'h8;
-                    2'd2: decode_key = 4'h9;
-                    2'd3: decode_key = 4'hC;
-                endcase
-            end
-            else if (rows[3]) begin
-                case (col)
-                    2'd0: decode_key = 4'hE;
-                    2'd1: decode_key = 4'h0;
-                    2'd2: decode_key = 4'hF;
-                    2'd3: decode_key = 4'hD;
-                endcase
-            end
+                4'h1: begin target_col=4'b0001; target_row=4'b0001; end
+                4'h2: begin target_col=4'b0010; target_row=4'b0001; end
+                4'h3: begin target_col=4'b0100; target_row=4'b0001; end
 
-        end
+                4'h4: begin target_col=4'b0001; target_row=4'b0010; end
+                4'h5: begin target_col=4'b0010; target_row=4'b0010; end
+                4'h6: begin target_col=4'b0100; target_row=4'b0010; end
 
-    endfunction
+                4'h7: begin target_col=4'b0001; target_row=4'b0100; end
+                4'h8: begin target_col=4'b0010; target_row=4'b0100; end
+                4'h9: begin target_col=4'b0100; target_row=4'b0100; end
 
-    // -------------------------------------------------------------------------
-    // FSM PRINCIPAL
-    // -------------------------------------------------------------------------
-    always_ff @(posedge clk or negedge rst_n) begin
+                4'h0: begin target_col=4'b0010; target_row=4'b1000; end
 
-        if (!rst_n) begin
+                4'hE: begin target_col=4'b0001; target_row=4'b1000; end
+                4'hF: begin target_col=4'b0100; target_row=4'b1000; end
 
-            state        <= SCAN;
-            col_idx      <= 2'd0;
-            counter      <= '0;
-            captured_key <= 4'h0;
-            key_code     <= 4'h0;
-            key_valid    <= 1'b0;
-
-        end
-        else begin
-
-            key_valid <= 1'b0;
-
-            case (state)
-
-                // -------------------------------------------------------------
-                SCAN:
-                begin
-
-                    if (|filas_sync) begin
-
-                        captured_key <= decode_key(col_idx, filas_sync);
-
-                        counter <= '0;
-                        state   <= DEBOUNCE_PRESS;
-
-                    end
-                    else if (counter >= (COL_HOLD_CYC - 1)) begin
-
-                        counter <= '0;
-                        col_idx <= col_idx + 1'b1;
-
-                    end
-                    else begin
-
-                        counter <= counter + 1'b1;
-
-                    end
-
+                default: begin
+                    target_col = 4'b0000;
+                    target_row = 4'b0000;
                 end
-
-                // -------------------------------------------------------------
-                DEBOUNCE_PRESS:
-                begin
-
-                    if (counter >= (DEBOUNCE_CYC - 1)) begin
-
-                        if ((|filas_sync) &&
-                            (decode_key(col_idx, filas_sync) == captured_key))
-                        begin
-
-                            key_code  <= captured_key;
-                            key_valid <= 1'b1;
-
-                            counter <= '0;
-                            state   <= WAIT_RELEASE;
-
-                        end
-                        else begin
-
-                            counter <= '0;
-                            state   <= SCAN;
-
-                        end
-
-                    end
-                    else begin
-
-                        counter <= counter + 1'b1;
-
-                    end
-
-                end
-
-                // -------------------------------------------------------------
-                WAIT_RELEASE:
-                begin
-
-                    if (!(|filas_sync)) begin
-
-                        counter <= '0;
-                        state   <= DEBOUNCE_RELEASE;
-
-                    end
-
-                end
-
-                // -------------------------------------------------------------
-                DEBOUNCE_RELEASE:
-                begin
-
-                    if (|filas_sync) begin
-
-                        counter <= '0;
-                        state   <= WAIT_RELEASE;
-
-                    end
-                    else if (counter >= (DEBOUNCE_CYC - 1)) begin
-
-                        counter <= '0;
-                        state   <= SCAN;
-
-                    end
-                    else begin
-
-                        counter <= counter + 1'b1;
-
-                    end
-
-                end
-
-                // -------------------------------------------------------------
-                default:
-                    state <= SCAN;
 
             endcase
 
+            // Esperar columna correcta
+            wait(columnas == target_col);
+
+            // Presionar
+            filas_raw = target_row;
+
+            #(PRESS_TIME);
+
+            // Soltar
+            filas_raw = 4'b0000;
+
+            #(RELEASE_TIME);
+
         end
+
+    endtask
+
+    // ============================================================
+    // TASK: INGRESAR NUMERO
+    // ============================================================
+    task ingresar_numero;
+
+        input [3:0] d2;
+        input [3:0] d1;
+        input [3:0] d0;
+
+        begin
+
+            if (d2 != 0)
+                press_key(d2);
+
+            if ((d2 != 0) || (d1 != 0))
+                press_key(d1);
+
+            press_key(d0);
+
+            // ENTER
+            press_key(4'hF);
+
+        end
+
+    endtask
+
+    // ============================================================
+    // TASK: VERIFICAR
+    // ============================================================
+    task verificar;
+
+        input [3:0] e3;
+        input [3:0] e2;
+        input [3:0] e1;
+        input [3:0] e0;
+
+        begin
+
+            #1000;
+
+            $display("----------------------------------------");
+
+            $display("Esperado = %0d%0d%0d%0d",
+                     e3,e2,e1,e0);
+
+            $display("Obtenido = %0d%0d%0d%0d",
+                     DUT.d3,
+                     DUT.d2,
+                     DUT.d1,
+                     DUT.d0);
+
+            if ((DUT.d3 == e3) &&
+                (DUT.d2 == e2) &&
+                (DUT.d1 == e1) &&
+                (DUT.d0 == e0))
+            begin
+                $display("PASS");
+            end
+            else begin
+                $display("FAIL");
+            end
+
+            $display("----------------------------------------");
+
+        end
+
+    endtask
+
+    // ============================================================
+    // TEST
+    // ============================================================
+    initial begin
+
+        $dumpfile("tb_top.vcd");
+        $dumpvars(0, tb_top);
+
+        filas_raw = 0;
+        rst_n = 0;
+
+        #1000;
+        rst_n = 1;
+
+        // ========================================================
+        // CASO 1
+        // ========================================================
+        $display("251 + 302 = 553");
+
+        ingresar_numero(4'd2,4'd5,4'd1);
+        ingresar_numero(4'd3,4'd0,4'd2);
+
+        verificar(4'd0,4'd5,4'd5,4'd3);
+
+        press_key(4'hF);
+
+        // ========================================================
+        // CASO 2
+        // ========================================================
+        $display("526 + 67 = 593");
+
+        ingresar_numero(4'd5,4'd2,4'd6);
+        ingresar_numero(4'd0,4'd6,4'd7);
+
+        verificar(4'd0,4'd5,4'd9,4'd3);
+
+        press_key(4'hF);
+
+        // ========================================================
+        // CASO 3
+        // ========================================================
+        $display("150 + 750 = 900");
+
+        ingresar_numero(4'd1,4'd5,4'd0);
+        ingresar_numero(4'd7,4'd5,4'd0);
+
+        verificar(4'd0,4'd9,4'd0,4'd0);
+
+        press_key(4'hF);
+
+        // ========================================================
+        // CASO 4
+        // ========================================================
+        $display("320 + 640 = 960");
+
+        ingresar_numero(4'd3,4'd2,4'd0);
+        ingresar_numero(4'd6,4'd4,4'd0);
+
+        verificar(4'd0,4'd9,4'd6,4'd0);
+
+        press_key(4'hF);
+
+        $display("FIN DE SIMULACION");
+
+        $finish;
+
+    end
+
+    // ============================================================
+    // TIMEOUT
+    // ============================================================
+    initial begin
+
+        #2000000000;
+
+        $display("TIMEOUT");
+
+        $finish;
 
     end
 
