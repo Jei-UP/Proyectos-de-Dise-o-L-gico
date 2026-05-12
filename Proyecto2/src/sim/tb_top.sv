@@ -1,21 +1,5 @@
 `timescale 1ns/1ps
 
-// =============================================================================
-//  tb_top.sv  —  Testbench sistema completo (Icarus Verilog compatible)
-//
-//  10 casos de prueba:
-//    1)  472 + 358 = 830
-//    2)  100 + 200 = 300
-//    3)  999 + 999 = 1998
-//    4)  001 + 001 = 2
-//    5)  500 + 500 = 1000
-//    6)  123 + 456 = 579
-//    7)  999 + 001 = 1000
-//    8)  750 + 250 = 1000
-//    9)  321 + 679 = 1000
-//   10)  100 + 900 = 1000
-// =============================================================================
-
 module tb_top;
 
     localparam CLK_PERIOD      = 10;
@@ -57,7 +41,6 @@ module tb_top;
     initial clk = 0;
     always #(CLK_PERIOD/2) clk = ~clk;
 
-    // Tabla fila/columna por digito
     integer fila_de [0:9];
     integer col_de  [0:9];
 
@@ -70,9 +53,24 @@ module tb_top;
         col_de[7]=0;  col_de[8]=1;  col_de[9]=2;
     end
 
-    // Contador de casos pasados/fallidos
     integer casos_ok;
     integer casos_fallo;
+
+    // =========================================================
+    // MONITOR: imprime cada vez que cambia algo relevante
+    // =========================================================
+    initial begin
+        $monitor("[%0t ns] col=%b filas=%b | dato_v=%b tecla_v=%b tecla=%0d | estado=%0d | n1=%0d n2=%0d | suma=%0d rdy=%b",
+            $time,
+            columnas, filas_raw,
+            DUT.dato_valido,
+            DUT.tecla_valida,
+            DUT.tecla,
+            DUT.fsm_inst.estado,
+            DUT.numero1, DUT.numero2,
+            suma, suma_ready
+        );
+    end
 
     task automatic presionar_tecla(
         input integer fila_num,
@@ -82,19 +80,35 @@ module tb_top;
         reg [3:0] col_esperada;
         integer   timeout;
         col_esperada = 4'b0001 << col_num;
+
+        $display("[%0t ns] >>> Esperando columna %b para tecla '%s'",
+                 $time, col_esperada, nombre_tecla);
+
         timeout = 0;
         while (columnas !== col_esperada) begin
             @(posedge clk);
             timeout = timeout + 1;
             if (timeout > CICLOS_BARRIDO * 20) begin
-                $display("  ERROR: timeout esperando columna %b", col_esperada);
+                $display("[%0t ns] ERROR: timeout esperando columna %b (columnas=%b)",
+                         $time, col_esperada, columnas);
                 disable presionar_tecla;
             end
         end
+
+        $display("[%0t ns] >>> Columna %b activa, presionando fila %0d",
+                 $time, col_esperada, fila_num);
+
         filas_raw[fila_num] = 1'b1;
         repeat (CICLOS_BARRIDO) @(posedge clk);
         filas_raw[fila_num] = 1'b0;
+
+        $display("[%0t ns] >>> Tecla '%s' soltada, esperando release...",
+                 $time, nombre_tecla);
+
         repeat (CICLOS_BARRIDO * 6) @(posedge clk);
+
+        $display("[%0t ns] >>> Tecla '%s' completada. tecla_v=%b n1=%0d n2=%0d",
+                 $time, nombre_tecla, DUT.tecla_valida, DUT.numero1, DUT.numero2);
     endtask
 
     task automatic ingresar_numero(
@@ -105,45 +119,15 @@ module tb_top;
         presionar_tecla(fila_de[d2], col_de[d2], $sformatf("%0d",d2));
         presionar_tecla(fila_de[d1], col_de[d1], $sformatf("%0d",d1));
         presionar_tecla(fila_de[d0], col_de[d0], $sformatf("%0d",d0));
-        presionar_tecla(3, 2, "#");  // confirmar
+        presionar_tecla(3, 2, "#");
     endtask
 
     task automatic hacer_reset();
-        rst_n = 1'b0;
+        rst_n     = 1'b0;
         filas_raw = 4'b0000;
         repeat (10) @(posedge clk);
         rst_n = 1'b1;
         repeat (5) @(posedge clk);
-    endtask
-
-    task automatic ejecutar_caso(
-        input integer a2, input integer a1, input integer a0,
-        input integer b2, input integer b1, input integer b0,
-        input integer esperado,
-        input integer num_caso
-    );
-        integer val_a, val_b;
-        val_a = a2*100 + a1*10 + a0;
-        val_b = b2*100 + b1*10 + b0;
-
-        hacer_reset();
-
-        $display("\n[Caso %0d] %0d + %0d = ? (esperado: %0d)",
-                 num_caso, val_a, val_b, esperado);
-
-        ingresar_numero(a2, a1, a0);
-        ingresar_numero(b2, b1, b0);
-
-        wait (suma_ready == 1'b1);
-        @(posedge clk);
-
-        if (suma == esperado[10:0]) begin
-            $display("  OK:    suma = %0d  CORRECTO", suma);
-            casos_ok = casos_ok + 1;
-        end else begin
-            $display("  FALLO: suma = %0d  ESPERADO %0d", suma, esperado);
-            casos_fallo = casos_fallo + 1;
-        end
     endtask
 
     // VCD
@@ -152,7 +136,7 @@ module tb_top;
         $dumpvars(0, tb_top);
     end
 
-    // Estimulos
+    // Solo el Caso 1 para diagnostico
     initial begin
         casos_ok    = 0;
         casos_fallo = 0;
@@ -160,34 +144,55 @@ module tb_top;
         rst_n       = 1'b0;
 
         $display("========================================================");
-        $display(" TESTBENCH: 10 casos de suma");
+        $display(" DIAGNOSTICO: Caso 1 — 472 + 358 = 830");
         $display("========================================================");
 
-        //            A          B        esperado  #caso
-        ejecutar_caso(4,7,2,   3,5,8,   830,        1);
-        ejecutar_caso(1,0,0,   2,0,0,   300,        2);
-        ejecutar_caso(9,9,9,   9,9,9,   1998,       3);
-        ejecutar_caso(0,0,1,   0,0,1,   2,          4);
-        ejecutar_caso(5,0,0,   5,0,0,   1000,       5);
-        ejecutar_caso(1,2,3,   4,5,6,   579,        6);
-        ejecutar_caso(9,9,9,   0,0,1,   1000,       7);
-        ejecutar_caso(7,5,0,   2,5,0,   1000,       8);
-        ejecutar_caso(3,2,1,   6,7,9,   1000,       9);
-        ejecutar_caso(1,0,0,   9,0,0,   1000,       10);
+        hacer_reset();
+
+        $display("\n--- Ingresando A = 472 ---");
+        ingresar_numero(4, 7, 2);
+
+        $display("\n--- Estado FSM despues de A: estado=%0d numero1=%0d ---",
+                 DUT.fsm_inst.estado, DUT.numero1);
+
+        $display("\n--- Ingresando B = 358 ---");
+        ingresar_numero(3, 5, 8);
+
+        $display("\n--- Estado FSM despues de B: estado=%0d numero2=%0d ---",
+                 DUT.fsm_inst.estado, DUT.numero2);
+
+        $display("\n--- Esperando suma_ready (timeout 5000 ciclos)... ---");
+        begin : espera_suma
+            integer t;
+            t = 0;
+            while (suma_ready !== 1'b1) begin
+                @(posedge clk);
+                t = t + 1;
+                if (t > 5000) begin
+                    $display("TIMEOUT: suma_ready nunca llego. estado=%0d n1=%0d n2=%0d datos_listos=%b",
+                             DUT.fsm_inst.estado, DUT.numero1, DUT.numero2, datos_listos);
+                    disable espera_suma;
+                end
+            end
+        end
+
+        @(posedge clk);
+        if (suma == 11'd830)
+            $display("OK: suma = %0d  CORRECTO", suma);
+        else
+            $display("FALLO: suma = %0d  ESPERADO 830", suma);
 
         $display("\n========================================================");
-        $display(" RESULTADO FINAL: %0d/10 correctos, %0d fallidos",
-                 casos_ok, casos_fallo);
+        $display(" DIAGNOSTICO COMPLETADO");
         $display("========================================================\n");
-
         #100;
         $finish;
     end
 
-    // Timeout global
     initial begin
-        #(CLK_PERIOD * 5_000_000);
-        $display("ERROR: Timeout global");
+        #(CLK_PERIOD * 500_000);
+        $display("TIMEOUT GLOBAL alcanzado. Ultima estado FSM=%0d n1=%0d n2=%0d",
+                 DUT.fsm_inst.estado, DUT.numero1, DUT.numero2);
         $finish;
     end
 
