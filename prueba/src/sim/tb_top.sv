@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+
 module tb_top;
 
     // ============================================================
@@ -8,8 +9,8 @@ module tb_top;
 
     initial clk = 0;
 
-    // ~27 MHz
-    always #18.5 clk = ~clk;
+    // Clock ~27 MHz (más rápido para simulación)
+    always #18 clk = ~clk;
 
     // ============================================================
     // DUT SIGNALS
@@ -36,8 +37,10 @@ module tb_top;
     // ============================================================
     // PARAMETROS
     // ============================================================
-    parameter PRESS_TIME   = 25000000;
-    parameter RELEASE_TIME = 25000000;
+    // Mantiene tiempos reales del keypad
+    // pero acelera la liberación
+    parameter PRESS_TIME   = 22000000;
+    parameter RELEASE_TIME = 100000;
 
     // ============================================================
     // TASK: PRESS KEY
@@ -51,6 +54,9 @@ module tb_top;
 
         begin
 
+            // ----------------------------------------------------
+            // Mapeo tecla -> fila/columna
+            // ----------------------------------------------------
             case(key)
 
                 4'h1: begin target_col=4'b0001; target_row=4'b0001; end
@@ -67,7 +73,10 @@ module tb_top;
 
                 4'h0: begin target_col=4'b0010; target_row=4'b1000; end
 
+                // *
                 4'hE: begin target_col=4'b0001; target_row=4'b1000; end
+
+                // #
                 4'hF: begin target_col=4'b0100; target_row=4'b1000; end
 
                 default: begin
@@ -77,15 +86,22 @@ module tb_top;
 
             endcase
 
-            // Esperar columna correcta
-            wait(columnas == target_col);
+            // ----------------------------------------------------
+            // Esperar columna correcta sincronizado con clock
+            // ----------------------------------------------------
+            while (columnas != target_col)
+                @(posedge clk);
 
-            // Presionar
+            // ----------------------------------------------------
+            // Presionar tecla
+            // ----------------------------------------------------
             filas_raw = target_row;
 
             #(PRESS_TIME);
 
-            // Soltar
+            // ----------------------------------------------------
+            // Soltar tecla
+            // ----------------------------------------------------
             filas_raw = 4'b0000;
 
             #(RELEASE_TIME);
@@ -113,7 +129,7 @@ module tb_top;
 
             press_key(d0);
 
-            // ENTER
+            // ENTER (#)
             press_key(4'hF);
 
         end
@@ -167,11 +183,11 @@ module tb_top;
     // ============================================================
     initial begin
 
-        $dumpfile("sim/tb_top.vcd");
+        $dumpfile("tb_top.vcd");
         $dumpvars(0, tb_top);
 
         filas_raw = 0;
-        rst_n = 0;
+        rst_n     = 0;
 
         #1000;
         rst_n = 1;
@@ -224,7 +240,9 @@ module tb_top;
 
         press_key(4'hF);
 
+        $display("========================================");
         $display("FIN DE SIMULACION");
+        $display("========================================");
 
         $finish;
 
@@ -235,7 +253,7 @@ module tb_top;
     // ============================================================
     initial begin
 
-        #2000000000;
+        #300000000;
 
         $display("TIMEOUT");
 
