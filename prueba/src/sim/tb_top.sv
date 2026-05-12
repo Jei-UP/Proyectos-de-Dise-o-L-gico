@@ -167,7 +167,7 @@ module tb_top;
     // ============================================================
     initial begin
 
-        $dumpfile("tb_top.vcd");
+        $dumpfile("sim/tb_top.vcd");
         $dumpvars(0, tb_top);
 
         filas_raw = 0;
