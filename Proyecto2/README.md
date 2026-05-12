@@ -112,7 +112,25 @@ En este subsistema no se presentan parámetros configurables.
 Para verificar que el subsistema sí esté funcionando correctamente, se creó el test bench tb_subsistema3. Este básicamente simula el módulo display_7, donde se le manda distintos valores. Este verifica que se haga la conversión de BCD a 7 segmentos de forma correcta, que funcione el multiplexado del selector y también el comportamiento del subsistema frente a valores inválidos (letras en hexadecimal ).
 
 
-
+Tiempo  | sel | dig_in  |   seg_7   |   AN
+----------------------------------------------------
+0       | 00  |  0      | 00111111 | 0001
+50000   | 00  |  1      | 00000110 | 0001
+150000  | 00  |  2      | 01011011 | 0001
+250000  | 00  |  3      | 01001111 | 0001
+350000  | 00  |  4      | 01100110 | 0001
+450000  | 00  |  5      | 01101101 | 0001
+550000  | 00  |  6      | 01111101 | 0001
+650000  | 00  |  7      | 00000111 | 0001
+750000  | 00  |  8      | 01111111 | 0001
+850000  | 00  |  9      | 01101111 | 0001
+950000  | 00  | 10      | 00000000 | 0001
+1050000 | 00  |  5      | 01101101 | 0001
+1150000 | 01  |  5      | 01101101 | 0010
+1250000 | 10  |  5      | 01101101 | 0100
+1350000 | 11  |  5      | 01101101 | 1000
+1450000 | 11  | 12      | 00000000 | 1000
+1550000 | 11  | 15      | 00000000 | 1000
 
 
 
