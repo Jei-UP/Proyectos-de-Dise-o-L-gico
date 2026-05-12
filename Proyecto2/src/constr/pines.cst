@@ -34,15 +34,8 @@ IO_LOC  "seg_7[6]" 34;
 
 IO_LOC  "AN[0]" 32;
 
-IO_LOC  "AN[1]" 70;
+IO_LOC  "AN[1]" 35;
 
-IO_LOC  "AN[2]" 48;
+IO_LOC  "AN[2]" 51;
 
 IO_LOC  "AN[3]" 40;
-
-IO_LOC "led[0]"   10;
-IO_LOC "led[1]"   11;
-IO_LOC "led[2]"   13;
-IO_LOC "led[3]"   14;
-IO_LOC "led[4]"   15;
-IO_LOC "led[5]"   16;
