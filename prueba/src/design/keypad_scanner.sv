@@ -1,38 +1,10 @@
-// =============================================================================
-// keypad_scanner.sv
-// Lectura sincronizada y con antirrebote de un teclado hexadecimal 4x4.
-//
-// Hardware asumido:
-//   - Filas: entradas a la FPGA, con pull-down externo de 10k a GND.
-//   - Columnas: salidas de la FPGA, manejadas one-hot en ALTO.
-//   Al presionar una tecla cuya columna esta en alto, la fila correspondiente
-//   sube a alto. Decodificando (columna, fila) se obtiene el codigo hex.
-//
-// Mapeo del teclado:
-//          Col0  Col1  Col2  Col3
-//   Row0:   1     2     3     A
-//   Row1:   4     5     6     B
-//   Row2:   7     8     9     C
-//   Row3:   *     0     #     D
-//
-// Codificacion de salida (key_code):
-//   teclas 0..9 -> 0x0..0x9
-//   teclas A..D -> 0xA..0xD
-//   tecla  '*'  -> 0xE
-//   tecla  '#'  -> 0xF
-//
-// FSM:
-//   SCAN             -> recorre columnas hasta detectar alguna fila activa
-//   DEBOUNCE_PRESS   -> mantiene la columna y espera 20 ms para confirmar
-//   WAIT_RELEASE     -> ya valido, espera a que se suelte la tecla
-//   DEBOUNCE_RELEASE -> confirma liberacion durante otros 20 ms
-// =============================================================================
+
 
 module keypad_scanner (
     input  logic       clk,
     input  logic       rst_n,
     input  logic [3:0] filas_raw,
-    output logic [3:0] columnas,
+    output logic [3:0] columnas,  //activa una columna a la vez con el one hot
     output logic [3:0] key_code,
     output logic       key_valid    // pulso de 1 ciclo en tecla validada
 );
@@ -48,13 +20,13 @@ module keypad_scanner (
     // Sincronizacion de las filas (2 FF para evitar metaestabilidad)
     // -------------------------------------------------------------------------
     logic [3:0] filas_meta, filas_sync;
-    always_ff @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk or negedge rst_n) begin   
         if (!rst_n) begin
             filas_meta <= 4'b0000;
             filas_sync <= 4'b0000;
         end else begin
             filas_meta <= filas_raw;
-            filas_sync <= filas_meta;
+            filas_sync <= filas_meta;   // filas_sync es la version sincronizada y estable de las filas
         end
     end
 
@@ -87,7 +59,7 @@ module keypad_scanner (
     end
 
     // -------------------------------------------------------------------------
-    // Funcion de decodificacion (col, fila) -> codigo hex de la tecla
+    // Funcion de decodificacion (col, fila) -> codigo hexadecimal de la tecla
     // -------------------------------------------------------------------------
     function automatic logic [3:0] decode_key(input logic [1:0] col,
                                               input logic [3:0] rows);
