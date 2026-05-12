@@ -16,7 +16,7 @@ module barrido_columnas #(
     logic [1:0]  col_activa_reg;
 
     // Decodificación combinacional del anillo (one-hot) a índice (2 bits)
-    logic [1:0] col_activa_comb;
+    logic [1:0] col_activa_comb; 
     always_comb begin
         case (anillo)
             4'b0001: col_activa_comb = 2'd0;
