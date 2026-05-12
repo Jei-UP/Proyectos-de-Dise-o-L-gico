@@ -1,5 +1,5 @@
 module top #(
-    parameter CICLOS_DEBOUNCE = 270,
+    parameter CICLOS_DEBOUNCE = 270_000,
     parameter CICLOS_BARRIDO  = 27_000
 )(
     input  logic       clk,
