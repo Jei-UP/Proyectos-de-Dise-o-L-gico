@@ -26,7 +26,7 @@ TOP_DESIGN = top
 TOP_TB = tb_top
 
 #nombre del vcd que va a generar el tb
-VCD_FILE = sim/tb_top.vcd
+VCD_FILE = tb_top.vcd
 
 
 all: synth pnr bitstream load
