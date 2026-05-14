@@ -15,7 +15,7 @@ SOURCES := $(wildcard ../design/*.v ../design/*.sv) #Todas las fuentes .v o .sv 
 
 #Fuente de simulacion
 #aca va el testbench que quieran simular
-TESTBENCH = ../sim/tb_top.vcd
+TESTBENCH = ../sim/tb_top.sv
 
 # Constraints para el proyecto
 #aca va el archivo de constraints del proyecto
