@@ -66,7 +66,7 @@ module tb_top;
     // =========================================================================
     initial begin
         // Habilitar trazas para GTKWave
-        $dumpfile("sim/tb_top.vcd");
+        $dumpfile("tb_top.vcd");
         $dumpvars(0, tb_top);
 
         // Estado inicial
@@ -81,8 +81,6 @@ module tb_top;
         #(T * 10);
 
         // =====================================================================
-        //   PRUEBA 1: 123 + 45 = 168
-        //
         //   Mapa del teclado (col activa ALTA, fila activa ALTA):
         //
         //        col0    col1    col2    col3
@@ -91,78 +89,76 @@ module tb_top;
         //   f2:   7       8       9       C
         //   f3:   *       0       #       D
         // =====================================================================
-        $display("=== PRUEBA 1: 123 + 45 = 168 ===");
 
-        // Ingresar primer número: 1 2 3
-        // Tecla '1' -> col0 (4'b0001), fila0 (4'b0001)
-        press_key(4'b0001, 4'b0001);
+        // =====================================================================
+        //   PRUEBA 1: 140 + 36 = 176
+        // =====================================================================
+        $display("=== PRUEBA 1: 140 + 36 = 176 ===");
+
+        // Ingresar primer número: 1 4 0
+        press_key(4'b0001, 4'b0001);   // '1' -> col0, fila0
         $display("  Digitado: 1");
 
-        // Tecla '2' -> col1 (4'b0010), fila0 (4'b0001)
-        press_key(4'b0010, 4'b0001);
-        $display("  Digitado: 2");
-
-        // Tecla '3' -> col2 (4'b0100), fila0 (4'b0001)
-        press_key(4'b0100, 4'b0001);
-        $display("  Digitado: 3");
-
-        // Confirmar primer número con '#' (Enter) -> col2 (4'b0100), fila3 (4'b1000)
-        press_key(4'b0100, 4'b1000);
-        $display("  Enter (# / paso a N2)");
-
-        // Ingresar segundo número: 4 5
-        // Tecla '4' -> col0 (4'b0001), fila1 (4'b0010)
-        press_key(4'b0001, 4'b0010);
+        press_key(4'b0001, 4'b0010);   // '4' -> col0, fila1
         $display("  Digitado: 4");
 
-        // Tecla '5' -> col1 (4'b0010), fila1 (4'b0010)
-        press_key(4'b0010, 4'b0010);
-        $display("  Digitado: 5");
+        press_key(4'b0010, 4'b1000);   // '0' -> col1, fila3
+        $display("  Digitado: 0");
 
-        // Confirmar con '#' y mostrar resultado -> col2 (4'b0100), fila3 (4'b1000)
-        press_key(4'b0100, 4'b1000);
-        $display("  Enter (# / mostrar suma, deberia ser 168)");
+        press_key(4'b0100, 4'b1000);   // '#' -> col2, fila3  (confirmar N1)
+        $display("  Enter (# / paso a N2)");
 
-        // Observar resultado en el display
+        // Ingresar segundo número: 3 6
+        press_key(4'b0100, 4'b0001);   // '3' -> col2, fila0
+        $display("  Digitado: 3");
+
+        press_key(4'b0100, 4'b0010);   // '6' -> col2, fila1
+        $display("  Digitado: 6");
+
+        press_key(4'b0100, 4'b1000);   // '#' -> col2, fila3  (calcular)
+        $display("  Enter (# / mostrar suma, deberia ser 176)");
+
         #(100_000_000);
 
-        // =====================================================================
-        //   LIMPIAR con '*' (Reset de la FSM)
-        //   Tecla '*' -> col0 (4'b0001), fila3 (4'b1000)
-        // =====================================================================
+        // Limpiar con '*' -> col0, fila3
         $display("  Limpiando con '*'");
         press_key(4'b0001, 4'b1000);
         #(50_000_000);
 
         // =====================================================================
-        //   PRUEBA 2: 99 + 99 = 198  (verificar acarreo de centenas)
+        //   PRUEBA 2: 561 + 256 = 817
         // =====================================================================
-        $display("=== PRUEBA 2: 99 + 99 = 198 ===");
+        $display("=== PRUEBA 2: 561 + 256 = 817 ===");
 
-        // '9' -> col2 (4'b0100), fila2 (4'b0100)
-        press_key(4'b0100, 4'b0100);
-        $display("  Digitado: 9");
-        press_key(4'b0100, 4'b0100);
-        $display("  Digitado: 9");
+        // Ingresar primer número: 5 6 1
+        press_key(4'b0010, 4'b0010);   // '5' -> col1, fila1
+        $display("  Digitado: 5");
 
-        // '#' para confirmar N1
-        press_key(4'b0100, 4'b1000);
-        $display("  Enter (paso a N2)");
+        press_key(4'b0100, 4'b0010);   // '6' -> col2, fila1
+        $display("  Digitado: 6");
 
-        press_key(4'b0100, 4'b0100);
-        $display("  Digitado: 9");
-        press_key(4'b0100, 4'b0100);
-        $display("  Digitado: 9");
+        press_key(4'b0001, 4'b0001);   // '1' -> col0, fila0
+        $display("  Digitado: 1");
 
-        // '#' para calcular
-        press_key(4'b0100, 4'b1000);
-        $display("  Enter (mostrar suma, deberia ser 198)");
+        press_key(4'b0100, 4'b1000);   // '#' -> col2, fila3  (confirmar N1)
+        $display("  Enter (# / paso a N2)");
+
+        // Ingresar segundo número: 2 5 6
+        press_key(4'b0010, 4'b0001);   // '2' -> col1, fila0
+        $display("  Digitado: 2");
+
+        press_key(4'b0010, 4'b0010);   // '5' -> col1, fila1
+        $display("  Digitado: 5");
+
+        press_key(4'b0100, 4'b0010);   // '6' -> col2, fila1
+        $display("  Digitado: 6");
+
+        press_key(4'b0100, 4'b1000);   // '#' -> col2, fila3  (calcular)
+        $display("  Enter (# / mostrar suma, deberia ser 817)");
 
         #(100_000_000);
 
-        // =====================================================================
-        //   LIMPIAR y FIN
-        // =====================================================================
+        // Limpiar con '*'
         $display("  Limpiando con '*'");
         press_key(4'b0001, 4'b1000);
         #(50_000_000);
