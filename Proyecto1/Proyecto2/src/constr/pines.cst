@@ -1,30 +1,41 @@
 IO_LOC  "clk" 52;
+
 IO_LOC  "rst_n" 4;
 
-// Filas: Entradas con pull-down explícito en la FPGA
 IO_LOC  "filas_raw[0]" 38;
-IO_PORT "filas_raw[0]" PULL_MODE=DOWN;
+
 IO_LOC  "filas_raw[1]" 37;
-IO_PORT "filas_raw[1]" PULL_MODE=DOWN;
+
 IO_LOC  "filas_raw[2]" 36;
-IO_PORT "filas_raw[2]" PULL_MODE=DOWN;
+
 IO_LOC  "filas_raw[3]" 39;
-IO_PORT "filas_raw[3]" PULL_MODE=DOWN;
 
 IO_LOC  "columnas[0]" 25;
+
 IO_LOC  "columnas[1]" 26;
+
 IO_LOC  "columnas[2]" 27;
+
 IO_LOC  "columnas[3]" 28;
 
 IO_LOC  "seg_7[0]" 31;
+
 IO_LOC  "seg_7[1]" 41;
+
 IO_LOC  "seg_7[2]" 33;
+
 IO_LOC  "seg_7[3]" 30;
+
 IO_LOC  "seg_7[4]" 29;
+
 IO_LOC  "seg_7[5]" 42;
+
 IO_LOC  "seg_7[6]" 34;
 
 IO_LOC  "AN[0]" 32;
+
 IO_LOC  "AN[1]" 35;
+
 IO_LOC  "AN[2]" 51;
+
 IO_LOC  "AN[3]" 40;

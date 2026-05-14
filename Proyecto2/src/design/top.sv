@@ -1,223 +1,133 @@
-module top #(
-    parameter CICLOS_DEBOUNCE = 270_000,
-    parameter CICLOS_BARRIDO  = 27_000
-)(
-    input  logic       clk,
-    input  logic       rst_n,        // activo en bajo
+// top.sv - Integración Final: FSM, Suma BCD y Blanking
+module top (
+    input  logic       clk,      // Reloj de 27 MHz [cite: 34, 110]
+    input  logic       rst_n,    // Reset físico (Botón S1/S2)
     input  logic [3:0] filas_raw,
-
     output logic [3:0] columnas,
-    output logic [9:0] num1_reg,
-    output logic [9:0] num2_reg,
-    output logic       datos_listos,
-
-    // SALIDAS PARA SUBSISTEMA 3
-    output logic [10:0] suma,
-    output logic        suma_ready,
-    output logic [7:0] seg_7,
+    output logic [6:0] seg_7,
     output logic [3:0] AN
 );
 
-    // =========================================================
-    // RESET
-    // =========================================================
-    logic rst;
-    assign rst = ~rst_n;
+    // --- Señales de Interconexión ---
+    logic [3:0] key_code;
+    logic       key_valid;
+    logic [3:0] en_mask; // Máscara para encender/apagar dígitos (Blanking)
+    
+    // Registros para Operandos (Dígitos individuales BCD)
+    logic [3:0] n1_d2, n1_d1, n1_d0;
+    logic [3:0] n2_d2, n2_d1, n2_d0;
+    
+    // Registros para el Resultado (Hasta 4 dígitos)
+    logic [3:0] res_d3, res_d2, res_d1, res_d0;
 
-    // =========================================================
-    // SEÑALES INTERNAS
-    // =========================================================
-    logic [3:0] filas_sync;
-    logic [3:0] filas_debounced;
+    // --- Instancia del Escáner de Teclado ---
+    keypad_scanner u_scanner (
+        .clk(clk), .rst_n(rst_n), .filas_raw(filas_raw),
+        .columnas(columnas), .key_code(key_code), .key_valid(key_valid)
+    );
 
-    logic [1:0] col_activa;
-    logic [3:0] filas_captura;
-    logic       dato_valido;
+    // --- Máquina de Estados (FSM) ---
+    typedef enum logic [1:0] {
+        INGRESO_N1,
+        INGRESO_N2,
+        MOSTRAR_SUMA
+    } state_t;
 
-    logic [3:0] tecla;
-    logic       tecla_valida;
+    state_t state;
 
-    logic [9:0] numero1;
-    logic [9:0] numero2;
+    // --- Lógica de Control Principal (Sincrónica) ---
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            state <= INGRESO_N1;
+            en_mask <= 4'b0000;
+            {n1_d2, n1_d1, n1_d0} <= '0;
+            {n2_d2, n2_d1, n2_d0} <= '0;
+        end else if (key_valid) begin
+            case (key_code)
+                // TECLA RESET (*)
+                4'hE: begin 
+                    state <= INGRESO_N1;
+                    en_mask <= 4'b0000;
+                    {n1_d2, n1_d1, n1_d0} <= '0;
+                    {n2_d2, n2_d1, n2_d0} <= '0;
+                end
 
-    logic suma_ready_fsm;
-    logic [1:0] modo;  // viene de la FSM: 00=A, 01=B, 10=suma
+                // TECLA ENTER (#)
+                4'hF: begin 
+                    case (state)
+                        INGRESO_N1: begin
+                            state <= INGRESO_N2;
+                            en_mask <= 4'b0000; // Limpia el display para el 2do número
+                        end
+                        INGRESO_N2: begin
+                            state <= MOSTRAR_SUMA;
+                            en_mask <= 4'b1111; // Enciende todos para ver el resultado
+                        end
+                        MOSTRAR_SUMA: begin
+                            state <= INGRESO_N1;
+                            en_mask <= 4'b0000;
+                            {n1_d2, n1_d1, n1_d0} <= '0;
+                            {n2_d2, n2_d1, n2_d0} <= '0;
+                        end
+                    endcase
+                end
 
-    // Señales internas del subsistema 2
-    logic [10:0] suma_internal;
-    logic        suma_ready_internal;
+                // TECLAS NUMÉRICAS (0-9) - Solución Robusta
+                4'h0, 4'h1, 4'h2, 4'h3, 4'h4, 4'h5, 4'h6, 4'h7, 4'h8, 4'h9: begin
+                    if (state != MOSTRAR_SUMA) begin
+                        // Actualiza la máscara de blanking (desplazamiento a la izquierda)
+                        en_mask <= {en_mask[2:0], 1'b1};
+                        
+                        // Captura del número (Shift Register de dígitos)
+                        if (state == INGRESO_N1) begin
+                            n1_d2 <= n1_d1; n1_d1 <= n1_d0; n1_d0 <= key_code;
+                        end else if (state == INGRESO_N2) begin
+                            n2_d2 <= n2_d1; n2_d1 <= n2_d0; n2_d0 <= key_code;
+                        end
+                    end
+                end
 
-    // =========================================================
-    // SINCRONIZADOR
-    // =========================================================
-    genvar i;
-    generate
-        for (i = 0; i < 4; i++) begin : gen_sync
-            sincronizador sync_inst (
-                .clk      (clk),
-                .async_in (filas_raw[i]),
-                .sync_out (filas_sync[i])
-            );
+                // TECLAS A, B, C, D: Ignoradas
+                default: ; 
+            endcase
         end
-    endgenerate
-
-    // =========================================================
-    // DEBOUNCE
-    // =========================================================
-    assign filas_debounced = filas_sync;
-
-    // =========================================================
-    // BARRIDO TECLADO
-    // =========================================================
-    barrido_columnas #(
-        .CICLOS_POR_COL(CICLOS_BARRIDO)
-    ) barrido_inst (
-        .clk          (clk),
-        .rst          (rst),
-        .filas        (filas_debounced),
-        .columnas     (columnas),
-        .col_activa   (col_activa),
-        .filas_captura(filas_captura),
-        .dato_valido  (dato_valido)
-    );
-
-    // =========================================================
-    // DECODIFICADOR
-    // =========================================================
-    decodificador_teclado deco_inst (
-        .clk          (clk),
-        .dato_valido  (dato_valido),
-        .col_activa   (col_activa),
-        .filas_captura(filas_captura),
-        .tecla        (tecla),
-        .tecla_valida (tecla_valida)
-    );
-
-    // =========================================================
-    // FSM TECLADO
-    // =========================================================
-    fsm_teclado #(
-        .CICLOS_BARRIDO(CICLOS_BARRIDO)
-    ) fsm_inst (
-        .clk         (clk),
-        .rst         (rst),
-        .tecla_valida(tecla_valida),
-        .tecla       (tecla),
-        .numero1     (numero1),
-        .numero2     (numero2),
-        .suma_ready  (suma_ready_fsm),
-        .modo        (modo)
-    );
-
-    // =========================================================
-    // REGISTROS DE SALIDA
-    // =========================================================
-    registros_salida regs_inst (
-        .clk          (clk),
-        .rst          (rst),          // ✔ conectado
-        .suma_ready   (suma_ready_fsm),
-        .numero1      (numero1),
-        .numero2      (numero2),
-        .num1_reg     (num1_reg),
-        .num2_reg     (num2_reg),
-        .datos_listos (datos_listos)
-    );
-
-    // =========================================================
-    // SUBSISTEMA 2 - SUMA
-    // =========================================================
-    subsistema_suma suma_inst (
-        .clk(clk),
-        .rst(rst),
-
-        .datos_listos(datos_listos),
-        .num1_reg(num1_reg),
-        .num2_reg(num2_reg),
-
-        .suma(suma_internal),
-        .suma_ready(suma_ready_internal)
-    );
-
-    // =========================================================
-    // SALIDAS HACIA SUBSISTEMA 3
-    // =========================================================
-    assign suma       = suma_internal;
-    assign suma_ready = suma_ready_internal;
-
-
-
-
-    // =========================================================
-    // SUBSISTEMA 3 - DISPLAY 7 SEGMENTOS
-    // =========================================================
-
-    // ---------- Señales internas ----------
-    logic [1:0]  sel;
-    logic [3:0]  dig_in;
-    logic [15:0] suma_bcd;
-    logic [15:0] num1_bcd;
-    logic [15:0] num2_bcd;
-    logic [15:0] bcd_activo;   // BCD que se manda al display según modo
-
-    // ---------- Función de conversión BIN → BCD (Double Dabble) ----------
-    // Macro local como tarea que se repite para los 3 valores
-    function automatic [15:0] bin_to_bcd_11;
-        input [10:0] bin;
-        integer k;
-        reg [15:0] bcd;
-        begin
-            bcd = 0;
-            for (k = 10; k >= 0; k = k - 1) begin
-                if (bcd[3:0]   >= 5) bcd[3:0]   = bcd[3:0]   + 3;
-                if (bcd[7:4]   >= 5) bcd[7:4]   = bcd[7:4]   + 3;
-                if (bcd[11:8]  >= 5) bcd[11:8]  = bcd[11:8]  + 3;
-                if (bcd[15:12] >= 5) bcd[15:12] = bcd[15:12] + 3;
-                bcd = {bcd[14:0], bin[k]};
-            end
-            bin_to_bcd_11 = bcd;
-        end
-    endfunction
-
-    always @(*) begin
-        suma_bcd = bin_to_bcd_11(suma_internal);
-        num1_bcd = bin_to_bcd_11({1'b0, numero1});  // numero1 es 10 bits
-        num2_bcd = bin_to_bcd_11({1'b0, numero2});
     end
 
-    // ---------- Selección de qué mostrar según el modo ----------
-    always @(*) begin
-        case (modo)
-            2'b00:   bcd_activo = num1_bcd;   // ingresando A
-            2'b01:   bcd_activo = num2_bcd;   // ingresando B
-            2'b10:   bcd_activo = suma_bcd;   // resultado
-            default: bcd_activo = num1_bcd;
+    // --- Sumador BCD (Combinacional) ---
+    // Realiza la suma dígito por dígito para ahorrar espacio en la FPGA
+    logic [4:0] s0, s1, s2; // 5 bits para el acarreo
+    always_comb begin
+        // Unidades
+        s0 = n1_d0 + n2_d0;
+        if (s0 > 9) begin res_d0 = s0 - 10; s1 = n1_d1 + n2_d1 + 1; end
+        else        begin res_d0 = s0[3:0]; s1 = n1_d1 + n2_d1;     end
+        
+        // Decenas
+        if (s1 > 9) begin res_d1 = s1 - 10; s2 = n1_d2 + n2_d2 + 1; end
+        else        begin res_d1 = s1[3:0]; s2 = n1_d2 + n2_d2;     end
+        
+        // Centenas y Millar (acarreo final)
+        if (s2 > 9) begin res_d2 = s2 - 10; res_d3 = 4'd1; end
+        else        begin res_d2 = s2[3:0]; res_d3 = 4'd0; end
+    end
+
+    // --- Multiplexor de Pantalla ---
+    logic [3:0] d3, d2, d1, d0;
+    always_comb begin
+        case (state)
+            INGRESO_N1:   {d3, d2, d1, d0} = {4'h0, n1_d2, n1_d1, n1_d0};
+            INGRESO_N2:   {d3, d2, d1, d0} = {4'h0, n2_d2, n2_d1, n2_d0};
+            MOSTRAR_SUMA: {d3, d2, d1, d0} = {res_d3, res_d2, res_d1, res_d0};
+            default:      {d3, d2, d1, d0} = '0;
         endcase
     end
 
-    // ---------- Instancia contador de barrido ----------
-    counter scan (
-        .clk(clk),
-        .rst(rst),
-        .sel(sel)
-    );
-
-    // ---------- Selector de dígito ----------
-    always @(*) begin
-        case (sel)
-            2'b00: dig_in = bcd_activo[3:0];
-            2'b01: dig_in = bcd_activo[7:4];
-            2'b10: dig_in = bcd_activo[11:8];
-            2'b11: dig_in = bcd_activo[15:12];
-        endcase
-    end
-
-    // ---------- Decodificador + display ----------
-    display_7 disp (
-        .clk(clk),
-        .sel(sel),
-        .dig_in(dig_in),
-        .seg_7(seg_7),
-        .AN(AN)
+    // --- Instancia del Display con Blanking ---
+    seven_seg_display u_display (
+        .clk(clk), .rst_n(rst_n),
+        .digit0(d0), .digit1(d1), .digit2(d2), .digit3(d3),
+        .en_mask(en_mask),
+        .seg_7(seg_7), .AN(AN)
     );
 
 endmodule
