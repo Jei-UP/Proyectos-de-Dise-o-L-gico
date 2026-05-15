@@ -205,6 +205,9 @@ apagar displays no utilizados,
 mejorar la visualización,
 evitar mostrar ceros innecesarios.
 
+PinOut del Display utilizado:
+![image alt](![alt text](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png))
+
 ### 3.5 Módulo Top
 El módulo top integra todos los subsistemas del proyecto:
 
@@ -249,6 +252,20 @@ gowin_pack
 openFPGALoader
 
 El proceso completo se ejecutó mediante el archivo Makefile.
+
+### 3.8 Ejercicios extra del proyecto:
+####  3.8.1 Contadores:
+La salida RCO del 74LS163 indica el estado terminal del contador (1111) y se utiliza para habilitar el siguiente contador en cascada. La conexión RCO → T permite extender el conteo a múltiples etapas de forma síncrona.
+Las entradas ENP (P) y ENT (T) deben estar activas simultáneamente para habilitar el conteo.
+El retardo de propagación típico del dispositivo es del orden de decenas de nanosegundos, por lo que las transiciones no son instantáneas.
+El disparo del osciloscopio se realiza preferentemente en el bit más significativo debido a su menor frecuencia y mayor estabilidad.
+Se pueden observar posibles glitches en la señal RCO debido a retardos internos desbalanceados, especialmente durante transiciones donde múltiples bits cambian simultáneamente.
+
+Señal de CLK obtenida desde la FPGA:
+![image alt](![alt text](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/Reloj%20Fpga.png))
+
+Señal obtenida del MSB del contador:
+![image alt](![alt text](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png))
 
 ## 4. Archivo de Constraints
 El archivo pines.cst define la asignación física de pines de la FPGA Tang Nano 9K.
