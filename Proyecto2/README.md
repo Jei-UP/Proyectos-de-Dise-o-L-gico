@@ -11,13 +11,14 @@ Sumador Decimal en FPGA con Teclado Matricial y Display de 7 Segmentos
 - Debounce: Técnica utilizada para eliminar rebotes mecánicos en señales digitales.
 
 ## 2. Referencias
-[0] David Harris y Sarah Harris. Digital Design and Computer Architecture. RISC-V Edition. Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3.
+[0] David Harris y Sarah Harris. Digital Design and Computer Architecture. RISC-V Edition. Morgan Kaufmann, 2022. ISBN: 978-0-12-820064-3
+[1] P. P. Chu. FPGA Prototyping by SystemVerilog Examples. Xilinx MicroBlaze MCS SoC Edition, 2nd ed. Hoboken, NJ, USA: Wiley, 2018
 
-[1] Documentación oficial Tang Nano 9K – Sipeed.
+[2] Documentación oficial Tang Nano 9K – Sipeed.
 
-[2] Documentación Yosys Open Synthesis Suite.
+[3] Documentación Yosys Open Synthesis Suite.
 
-[3] Documentación nextpnr-gowin.
+[4] Documentación nextpnr-gowin.
 
 ## 3. Desarrollo
 ### 3.0 Descripción general del sistema
@@ -49,9 +50,6 @@ src/
 │   └── top.sv
 │
 └── sim/
-    ├── tb_subsistema1.sv
-    ├── tb_subsistema2.sv
-    ├── tb_subsistema3.sv
     └── tb_top.sv
 
 ### 3.2 Subsistema 1 – Lectura de Teclado Matricial
