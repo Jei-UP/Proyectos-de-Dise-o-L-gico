@@ -206,7 +206,7 @@ mejorar la visualización,
 evitar mostrar ceros innecesarios.
 
 PinOut del Display utilizado:
-![image alt]([[https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/2c41d96f0057794e207db3bb1c00d439087ecfe3/Proyecto2/images/diagramas/Displays%20pinout.jpeg](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/2c41d96f0057794e207db3bb1c00d439087ecfe3/Proyecto2/images/diagramas/Displays%20pinout.jpeg))
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/670023c0b5ab89644596a4ac965f05bc68f0b5fe/Proyecto2/images/diagramas/Displays-pinout.png)
 
 ### 3.5 Módulo Top
 El módulo top integra todos los subsistemas del proyecto:
