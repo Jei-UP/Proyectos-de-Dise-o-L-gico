@@ -206,7 +206,7 @@ mejorar la visualización,
 evitar mostrar ceros innecesarios.
 
 PinOut del Display utilizado:
-![alt text]([https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/2c41d96f0057794e207db3bb1c00d439087ecfe3/Proyecto2/images/diagramas/Displays%20pinout.jpeg))
+![image alt]([https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/2c41d96f0057794e207db3bb1c00d439087ecfe3/Proyecto2/images/diagramas/Displays%20pinout.jpeg)
 
 ### 3.5 Módulo Top
 El módulo top integra todos los subsistemas del proyecto:
@@ -262,10 +262,10 @@ El disparo del osciloscopio se realiza preferentemente en el bit más significat
 Se pueden observar posibles glitches en la señal RCO debido a retardos internos desbalanceados, especialmente durante transiciones donde múltiples bits cambian simultáneamente.
 
 Señal de CLK obtenida desde la FPGA:
-![image alt](![alt text](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/Reloj%20Fpga.png))
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/Reloj%20Fpga.png)
 
 Señal obtenida del MSB del contador:
-![image alt](![alt text](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png))
+![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png)
 
 ## 4. Archivo de Constraints
 El archivo pines.cst define la asignación física de pines de la FPGA Tang Nano 9K.
