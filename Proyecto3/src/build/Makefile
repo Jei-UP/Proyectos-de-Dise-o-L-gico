@@ -22,7 +22,7 @@ TESTBENCH = ../sim/tb_primera_fila.sv
 CONSTRAINTS = ../constr/pines.cst
 
 #el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
-TOP_DESIGN = divider_pipelined
+TOP_DESIGN = top
 TOP_TB = tb_primera_fila
 
 #nombre del vcd que va a generar el tb
