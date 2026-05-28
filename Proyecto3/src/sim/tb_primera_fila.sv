@@ -164,3 +164,27 @@ module tb_primera_fila;
     end
 
 endmodule
+
+
+// =============================================================================
+// DUT: primera_fila
+// Implementa exactamente la Fila i=6 del divider_pipelined
+// =============================================================================
+module primera_fila (
+    input  logic [6:0] A,
+    input  logic [4:0] B,
+    output logic       q_w6,
+    output logic [4:0] r_w6
+);
+    logic [5:0] r_temp6;
+    logic [5:0] d_temp6;
+
+    assign r_temp6 = {5'b00000, A[6]};
+    assign d_temp6 = r_temp6 - {1'b0, B};
+    assign q_w6    = !d_temp6[5];
+    assign r_w6    = d_temp6[5] ? r_temp6[4:0] : d_temp6[4:0];
+
+endmodule
+
+
+
