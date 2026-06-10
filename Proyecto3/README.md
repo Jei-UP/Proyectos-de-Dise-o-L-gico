@@ -1,5 +1,5 @@
 # Nombre del proyecto
-Sumador Decimal en FPGA con Teclado Matricial y Display de 7 Segmentos
+División de enteros en FPGA con Teclado Matricial y Display de 7 Segmentos
 
 ## 1. Abreviaturas y definiciones
 - FPGA: Field Programmable Gate Array.
@@ -21,251 +21,378 @@ Sumador Decimal en FPGA con Teclado Matricial y Display de 7 Segmentos
 [4] Documentación nextpnr-gowin.
 
 ## 3. Desarrollo
-### 3.0 Descripción general del sistema
-El sistema implementado consiste en una calculadora decimal desarrollada sobre una FPGA Tang Nano 9K. El sistema permite ingresar dos números enteros positivos utilizando un teclado hexadecimal matricial de 4x4, realizar la suma aritmética de ambos operandos y mostrar el resultado en displays de siete segmentos multiplexados.
+### 3.1. Descripción general
 
-El diseño completo opera de manera síncrona utilizando el reloj principal de 27 MHz proporcionado por la FPGA.
+El sistema implementa una unidad de división entera sin signo sobre una FPGA Tang Nano 9K. El usuario introduce un dividendo y un divisor mediante un teclado hexadecimal matricial 4×4. Una vez ingresados ambos operandos, el sistema ejecuta una división entera utilizando un algoritmo restaurador segmentado mediante pipeline. Finalmente, el cociente o el residuo son desplegados en un display multiplexado de 7 segmentos.
 
-La arquitectura del sistema se divide en tres bloques principales:
+El sistema completo se encuentra dividido en cuatro subsistemas principales:
 
-Subsistema de lectura de teclado.
-Subsistema de procesamiento aritmético.
-Subsistema de visualización en displays de siete segmentos.
+1. Subsistema de lectura de datos.
+2. Subsistema de control.
+3. Subsistema de cálculo de división.
+4. Subsistema de despliegue.
 
-El sistema fue desarrollado utilizando SystemVerilog y validado mediante simulación funcional, síntesis lógica, place and route y generación de bitstream para FPGA.
+---
 
-### 3.1 Organización del Proyecto
-src/
-│
-├── build/
-│   └── Makefile
-│
-├── constr/
-│   ├── pines.cst
-│   └── tangnano9k_constrains_template.txt
-│
-├── design/
-│   ├── keypad_scanner.sv
-│   ├── seven_seg_display.sv
-│   └── top.sv
-│
-└── sim/
-    └── tb_top.sv
+### 3.2. Subsistema de lectura de datos
 
-### 3.2 Subsistema 1 – Lectura de Teclado Matricial
-Encabezado del módulo:
-module keypad_scanner (
-    input  logic       clk,
-    input  logic       rst_n,
-    input  logic [3:0] filas_raw,
-    output logic [3:0] columnas,
-    output logic [3:0] key_code,
-    output logic       key_valid
-);
+Este subsistema está implementado mediante el módulo `keypad_scanner`.
 
-Este subsistema es el encargado de detectar las teclas presionadas en el teclado hexadecimal matricial 4x4.
+Su función consiste en:
 
-El módulo implementa:
+* Escanear continuamente las columnas del teclado matricial.
+* Detectar la fila activa.
+* Decodificar la tecla presionada.
+* Eliminar rebotes mecánicos mediante antirrebote por temporización.
+* Generar un pulso de validación (`key_valid`) cuando una tecla ha sido confirmada.
 
-Barrido secuencial de columnas.
-Sincronización de entradas.
-Eliminación de rebotes mecánicos.
-Decodificación hexadecimal.
-Generación de pulsos válidos de tecla.
+Las entradas externas son sincronizadas mediante dos flip-flops consecutivos para evitar problemas de metaestabilidad.
 
-El teclado opera mediante multiplexación de columnas utilizando un esquema one-hot.
+Las teclas especiales utilizadas son:
 
-El sistema activa una columna a la vez y verifica si alguna fila presenta un valor lógico alto. Cuando esto ocurre, se identifica la posición de la tecla y posteriormente se realiza un proceso de debounce para validar la pulsación.
+| Tecla | Función                           |
+| ----- | --------------------------------- |
+| * (E) | Borrar datos                      |
+| # (F) | Confirmar ingreso                 |
+| A     | Alternar entre cociente y residuo |
 
-La detección de teclas se controla mediante una máquina de estados finita (FSM) compuesta por cuatro estados:
+---
 
-SCAN
-DEBOUNCE_PRESS
-WAIT_RELEASE
-DEBOUNCE_RELEASE
+### 3.3. Subsistema de control
 
-Esto garantiza que:
+El módulo principal `top.sv` implementa una máquina de estados finitos encargada de coordinar el funcionamiento global del sistema.
 
-no existan falsas detecciones,
-no se repitan teclas por rebote,
-cada pulsación genere únicamente un pulso válido.
+Este bloque:
 
-El teclado utiliza codificación hexadecimal:
-| Tecla | Código Hex |
-| ----- | ---------- |
-| 0     | 0x0        |
-| 1     | 0x1        |
-| 2     | 0x2        |
-| 3     | 0x3        |
-| 4     | 0x4        |
-| 5     | 0x5        |
-| 6     | 0x6        |
-| 7     | 0x7        |
-| 8     | 0x8        |
-| 9     | 0x9        |
-| A     | 0xA        |
-| B     | 0xB        |
-| C     | 0xC        |
-| D     | 0xD        |
-| *     | 0xE        |
-| #     | 0xF        |
+* Recibe los códigos del teclado.
+* Almacena los dígitos del dividendo y divisor.
+* Convierte los operandos de BCD a binario.
+* Activa el inicio de la división.
+* Espera la finalización del cálculo.
+* Selecciona si se despliega el cociente o el residuo.
 
-Las teclas especiales fueron utilizadas de la siguiente manera:
+---
 
-* → reinicio del ingreso.
-# → confirmación del número ingresado.
+### 3.4. Subsistema de cálculo de división
 
-Debido a que las entradas provenientes del teclado son señales asíncronas respecto al reloj de la FPGA, se implementó un sincronizador de doble flip-flop para evitar problemas de metaestabilidad.
-Posteriormente se aplicó una etapa de debounce de aproximadamente 20 ms para eliminar rebotes mecánicos generados por las teclas físicas.
+La división es realizada por el módulo `divider_pipelined`.
 
-Se desarrolló un testbench funcional que simula la pulsación real de teclas del teclado matricial.
+El algoritmo implementado corresponde a una versión pipelineada del algoritmo restaurador de división binaria.
+
+Características:
+
+* Dividendo de 7 bits.
+* Divisor de 5 bits.
+* Cociente de 7 bits.
+* Residuo de 5 bits.
+* Latencia total de 4 ciclos de reloj.
+
+El divisor se divide en cuatro etapas pipeline:
+
+| Etapa   | Filas procesadas |
+| ------- | ---------------- |
+| Etapa 1 | i=6, i=5         |
+| Etapa 2 | i=4, i=3         |
+| Etapa 3 | i=2, i=1         |
+| Etapa 4 | i=0              |
+
+Cada etapa realiza:
+
+1. Desplazamiento del residuo parcial.
+2. Resta del divisor.
+3. Evaluación del signo.
+4. Restauración cuando la resta resulta negativa.
+5. Generación de un nuevo bit del cociente.
+
+El resultado final se entrega mediante las señales:
+
+* `Q` → cociente.
+* `R` → residuo.
+* `done` → resultado válido.
+
+---
+
+### 3.5. Subsistema de despliegue
+
+El módulo `seven_seg_display` controla cuatro displays de siete segmentos mediante multiplexación temporal.
+
+Este bloque:
+
+* Refresca continuamente los displays.
+* Selecciona un dígito activo por ciclo de multiplexación.
+* Convierte números BCD a patrones de siete segmentos.
+* Permite apagar dígitos mediante la máscara `en_mask`.
+
+Cuando la división finaliza:
+
+* Se muestra el cociente precedido por la letra C.
+* Se muestra el residuo precedido por la letra d.
+
+La selección se realiza mediante la tecla A.
+
+---
+
+## 4. Diagramas de bloques de cada subsistema
+
+### 4.1. Sistema completo
+
+```mermaid
+graph LR
+
+A[Teclado 4x4] --> B[Keypad Scanner]
+B --> C[FSM Principal]
+
+C --> D[Conversión BCD a Binario]
+
+D --> E[Divisor Pipelineado]
+
+E --> F[Conversión Binario a BCD]
+
+F --> G[Display 7 Segmentos]
+```
+
+---
+
+### 4.2. Subsistema de lectura
+
+```mermaid
+graph LR
+
+A[Filas del teclado] --> B[Sincronizador]
+B --> C[FSM Scanner]
+
+D[Generador de columnas]
+--> C
+
+C --> E[key_code]
+C --> F[key_valid]
+```
+
+---
+
+### 4.3. Subsistema de división
+
+```mermaid
+graph LR
+
+A[Dividendo]
+B[Divisor]
+
+A --> C[Etapa 1]
+B --> C
+
+C --> D[Etapa 2]
+
+D --> E[Etapa 3]
+
+E --> F[Etapa 4]
+
+F --> G[Cociente]
+F --> H[Residuo]
+```
+
+---
+
+### 4.4. Subsistema de despliegue
+
+```mermaid
+graph LR
+
+A[BCD]
+--> B[Multiplexor]
+
+B --> C[Decodificador 7 segmentos]
+
+C --> D[AN]
+C --> E[SEG]
+```
+
+---
+
+## 5. Diagramas de estado de las FSM
+
+### 5.1. FSM del teclado
+
+```mermaid
+stateDiagram-v2
+
+[*] --> SCAN
+
+SCAN --> DEBOUNCE_PRESS : tecla detectada
+
+DEBOUNCE_PRESS --> WAIT_RELEASE : tecla valida
+
+DEBOUNCE_PRESS --> SCAN : rebote
+
+WAIT_RELEASE --> DEBOUNCE_RELEASE : tecla liberada
+
+DEBOUNCE_RELEASE --> WAIT_RELEASE : rebote
+
+DEBOUNCE_RELEASE --> SCAN : liberacion valida
+```
+
+---
+
+### 5.2. FSM principal del sistema
+
+```mermaid
+stateDiagram-v2
+
+[*] --> INGRESO_DIVIDENDO
+
+INGRESO_DIVIDENDO --> INGRESO_DIVISOR : tecla #
+
+INGRESO_DIVISOR --> START_DIV : tecla #
+
+START_DIV --> WAIT_DIV
+
+WAIT_DIV --> MOSTRAR_RESULTADO : done
+
+MOSTRAR_RESULTADO --> INGRESO_DIVIDENDO : tecla * o #
+```
+
+---
+
+## 6. Ejemplo y análisis de una simulación funcional
+
+### 6.1. Caso de prueba
+
+Dividendo = 127
+
+Divisor = 31
+
+Operación realizada:
+
+127 ÷ 31
+
+Resultado esperado:
+
+* Cociente = 4
+* Residuo = 3
+
+---
+
+### 6.2. Flujo de ejecución
+
+#### 6.2.1. Paso 1 – Ingreso del dividendo
+
+El usuario ingresa:
+
+1 → 2 → 7
+
+La FSM permanece en el estado:
+
+```
+INGRESO_DIVIDENDO
+```
+
+y almacena los tres dígitos.
+
+---
+
+#### 6.2.2. Paso 2 – Confirmación
+
+El usuario presiona:
+
+```
+#
+```
+
+La FSM cambia a:
+
+```
+INGRESO_DIVISOR
+```
+
+---
+
+#### 6.2.3. Paso 3 – Ingreso del divisor
+
+El usuario introduce:
+
+```
+3 → 1
+```
+
+---
+
+#### 6.2.4. Paso 4 – Inicio de la división
+
+Se vuelve a presionar:
+
+```
+#
+```
+
+La FSM genera:
+
+```
+div_valid = 1
+```
+
+durante un ciclo de reloj.
+
+---
+
+#### 6.2.5. Paso 5 – Procesamiento pipeline
+
+La operación avanza por las cuatro etapas pipeline:
+
+1. Etapa 1 genera dos bits del cociente.
+2. Etapa 2 genera dos bits adicionales.
+3. Etapa 3 genera otros dos bits.
+4. Etapa 4 genera el último bit y el residuo.
+
+Después de cuatro ciclos:
+
+```
+done = 1
+```
+
+---
+
+#### 6.2.6. Paso 6 – Visualización
+
+El sistema entra en:
+
+```
+MOSTRAR_RESULTADO
+```
+
+y despliega:
+
+```
+C004
+```
+
+indicando cociente igual a 4.
+
+Al presionar la tecla A:
+
+```
+d003
+```
+
+indicando residuo igual a 3.
+
+---
+
+### 6.3. Verificación funcional
+
+El testbench `tb_primera_fila.sv` valida exhaustivamente la primera fila del algoritmo restaurador.
 
 Las pruebas realizadas incluyen:
 
-Ingreso de números completos.
-Confirmación mediante tecla #.
-Reinicio mediante tecla *.
-Verificación de límite máximo de tres dígitos.
-Validación de registros internos.
+* Casos normales.
+* Casos límite.
+* Barridos completos para B = 0..31.
+* Validación automática contra un modelo de referencia.
 
-Los resultados obtenidos fueron correctos en todos los escenarios evaluados.
+Los resultados obtenidos muestran cero errores para todos los casos probados, verificando el funcionamiento correcto de la primera etapa del divisor.
 
-### 3.3 Subsistema 2 – Suma Aritmética
-El subsistema aritmético realiza la suma decimal de los dos números ingresados desde el teclado.
 
-La operación se ejecuta utilizando lógica combinacional y registros BCD internos.
 
-El diseño soporta:
-
-números de hasta tres dígitos,
-resultados de hasta cuatro dígitos,
-manejo de acarreo decimal.
-
-La suma se realiza dígito por dígito:
-
-unidades,
-decenas,
-centenas.
-
-Cada etapa verifica si el resultado supera el valor decimal 9 para generar el acarreo correspondiente.
-
-El resultado final se almacena en:
-
-res_d3 res_d2 res_d1 res_d0
-
-permitiendo representar resultados desde 0 hasta 1998.
-
-Las simulaciones realizadas incluyen:
-| Operación | Resultado |
-| --------- | --------- |
-| 123 + 456 | 579       |
-| 9 + 5     | 14        |
-| 999 + 1   | 1000      |
-| 150 + 750 | 900       |
-| 320 + 640 | 960       |
-
-Todos los resultados fueron correctos durante la simulación.
-
-### 3.4 Subsistema 3 – Display de 7 Segmentos
-Encabezado del módulo:
-module seven_seg_display (
-    input  logic       clk,
-    input  logic       rst_n,
-    input  logic [3:0] digit0,
-    input  logic [3:0] digit1,
-    input  logic [3:0] digit2,
-    input  logic [3:0] digit3,
-    input  logic [3:0] en_mask,
-    output logic [6:0] seg_7,
-    output logic [3:0] AN
-);
-
-Este módulo controla los displays de siete segmentos de la FPGA utilizando multiplexación temporal.
-
-Debido a que los cuatro displays comparten las líneas de segmentos, únicamente un display se activa a la vez.
-
-La selección se realiza utilizando un contador de refresco sincronizado con el reloj principal.
-
-El sistema utiliza los bits altos del contador de refresco para alternar entre los cuatro displays.
-
-La velocidad de refresco es suficientemente alta para que el ojo humano perciba todos los displays encendidos simultáneamente.
-
-El módulo implementa un decodificador hexadecimal a siete segmentos que permite representar:
-
-números del 0 al 9,
-caracteres hexadecimales A–F.
-
-Se implementó una máscara de habilitación denominada en_mask.
-
-Esta máscara permite:
-
-apagar displays no utilizados,
-mejorar la visualización,
-evitar mostrar ceros innecesarios.
-
-PinOut del Display utilizado:
-![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/670023c0b5ab89644596a4ac965f05bc68f0b5fe/Proyecto2/images/diagramas/Displays-pinout.png)
-
-### 3.5 Módulo Top
-El módulo top integra todos los subsistemas del proyecto:
-
-lectura de teclado,
-procesamiento aritmético,
-control de displays.
-
-Además, implementa la FSM principal encargada de controlar:
-
-ingreso del primer número,
-ingreso del segundo número,
-visualización del resultado.
-
-Los estados implementados son:
-INGRESO_N1
-INGRESO_N2
-MOSTRAR_SUMA
-
-### 3.6 Simulación del Sistema Completo
-Se desarrolló un testbench general (tb_top.sv) para validar la operación completa del sistema.
-Las pruebas realizadas incluyen:
-| Operación | Resultado Esperado |
-| --------- | ------------------ |
-| 251 + 302 | 553                |
-| 526 + 67  | 593                |
-| 150 + 750 | 900                |
-| 320 + 640 | 960                |
-
-La simulación verificó correctamente:
-
-lectura del teclado,
-transición de estados,
-suma aritmética,
-despliegue en displays.
-
-### 3.7 Implementación en FPGA
-Para la implementación física del sistema se utilizó el flujo open-source basado en:
-
-Yosys
-nextpnr-gowin
-gowin_pack
-openFPGALoader
-
-El proceso completo se ejecutó mediante el archivo Makefile.
-
-### 3.8 Ejercicios extra del proyecto:
-####  3.8.1 Contadores:
-La salida RCO del 74LS163 indica el estado terminal del contador (1111) y se utiliza para habilitar el siguiente contador en cascada. La conexión RCO → T permite extender el conteo a múltiples etapas de forma síncrona.
-Las entradas ENP (P) y ENT (T) deben estar activas simultáneamente para habilitar el conteo.
-El retardo de propagación típico del dispositivo es del orden de decenas de nanosegundos, por lo que las transiciones no son instantáneas.
-El disparo del osciloscopio se realiza preferentemente en el bit más significativo debido a su menor frecuencia y mayor estabilidad.
-Se pueden observar posibles glitches en la señal RCO debido a retardos internos desbalanceados, especialmente durante transiciones donde múltiples bits cambian simultáneamente.
-
-Señal de CLK obtenida desde la FPGA:
-![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/Reloj%20Fpga.png)
-
-Señal obtenida del MSB del contador:
-![image alt](https://github.com/Jei-UP/Proyectos-de-Dise-o-L-gico/blob/53c8b962ba57e8c2df3f141ea72fccd93ebfdbb1/Proyecto2/images/Ejercicio%201/MSB.png)
-
-## 4. Archivo de Constraints
+## 7. Archivo de Constraints
 El archivo pines.cst define la asignación física de pines de la FPGA Tang Nano 9K.
 
 Las señales asignadas incluyen:
@@ -279,7 +406,7 @@ segmentos del display,
 
 También se configuraron resistencias pull-down en las entradas del teclado para evitar estados flotantes.
 
-## 5. Problemas Encontrados Durante el Proyecto
+## 8. Problemas Encontrados Durante el Proyecto
 Durante el desarrollo del proyecto se encontraron varios problemas técnicos importantes:
 
 Rebotes mecánicos del teclado matricial.
@@ -295,7 +422,7 @@ Integración entre módulos.
 
 Todos los problemas fueron corregidos satisfactoriamente.
 
-## 6. Consumo de Recursos
+## 9. Consumo de Recursos
 El diseño final fue sintetizado exitosamente para la FPGA Tang Nano 9K. Hubo un consumo de 6%.
 
 La implementación cumplió correctamente con:
@@ -305,7 +432,7 @@ utilización válida de LUTs,
 utilización válida de flip-flops,
 generación correcta del bitstream final.
 
-## 7. Conclusiones
+## 10. Conclusiones
 Se logró implementar correctamente una calculadora decimal completamente funcional utilizando FPGA y SystemVerilog.
 
 El sistema permitió capturar datos desde un teclado hexadecimal matricial, procesar operaciones aritméticas y desplegar resultados utilizando displays de siete segmentos multiplexados.
@@ -322,9 +449,9 @@ síntesis lógica.
 
 Finalmente, todas las pruebas realizadas tanto en simulación como en síntesis fueron exitosas, validando el funcionamiento correcto del sistema completo.
 
-## 8. Apéndices
+## 11. Apéndices
 
-### Apéndice A – Herramientas utilizadas
+### 11.1 Apéndice A – Herramientas utilizadas
 SystemVerilog
 Yosys
 nextpnr-gowin
@@ -333,6 +460,6 @@ GTKWave
 Icarus Verilog
 openFPGALoader
 
-### Apéndice B – FPGA utilizada
+### 11.2 Apéndice B – FPGA utilizada
 Tang Nano 9K
 Gowin GW1NR-LV9QN88PC6/I5
