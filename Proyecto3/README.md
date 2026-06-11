@@ -390,6 +390,10 @@ Las pruebas realizadas incluyen:
 
 Los resultados obtenidos muestran cero errores para todos los casos probados, verificando el funcionamiento correcto de la primera etapa del divisor.
 
+Verificación que la primera fila sí funcionó por medio de comando "make test":
+<img width="563" height="586" alt="Captura de pantalla 2026-06-11 001437" src="https://github.com/user-attachments/assets/3f6f4529-975d-4836-a5b6-8e459e77afcf" />
+
+
 
 
 ## 7. Archivo de Constraints
