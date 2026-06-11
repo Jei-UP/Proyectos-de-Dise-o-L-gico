@@ -142,7 +142,7 @@ graph LR
     reset --> KS
     KS --> key_code
     KS --> key_valid
-    key_code[3:0] --> TOP
+    key_code --> TOP
     key_valid --> TOP
     TOP --> valid
     valid --> DP[divider_pipelined]
