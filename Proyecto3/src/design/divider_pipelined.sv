@@ -1,4 +1,3 @@
-// divider_pipelined.sv - Versión Expandida Corregida para Puntaje Extra (7 bits / 5 bits)
 module divider_pipelined (
     input  logic       clk,
     input  logic       rst_n,
