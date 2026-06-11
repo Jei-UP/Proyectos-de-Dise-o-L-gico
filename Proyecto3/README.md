@@ -443,9 +443,20 @@ La implementación cumplió correctamente con:
 frecuencia objetivo de 27 MHz,
 utilización válida de LUTs,
 utilización válida de flip-flops,
+sincronización correcta,
 generación correcta del bitstream final.
 
-## 10. Conclusiones
+Imagen evidenciando el consumo total de los recursos:
+<img width="516" height="341" alt="image" src="https://github.com/user-attachments/assets/eb3cdbba-78e4-4042-aa04-5db555fba638" />
+
+## 10. Reporte de velocidades
+Realizando el comando "make pnr" se obtuvo que la velocidad máxima que alcanzó el diseño propuesto fue de aproximadamente 62.72MHz, lo cual cumple con el objetivo de una velocidad mínima de 27MHz. Haciendo el cálculo de los tiempos, el objetivo era que no durara más de 37.04ns (según los 27MHz), y esto se logra puesto que al realizar el mismo cálculo, el tiempo es de 14.76ns, por lo que se adapta a la restricción temporal.
+Esto anterior se evidencia en la siguiente imagen:
+
+<img width="770" height="152" alt="Captura de pantalla 2026-06-11 004345" src="https://github.com/user-attachments/assets/9b359094-09d3-46cd-b6d8-4315054669cc" />
+
+
+# 11. Conclusiones
 Se logró implementar correctamente una calculadora decimal completamente funcional utilizando FPGA y SystemVerilog.
 
 El sistema permitió capturar datos desde un teclado hexadecimal matricial, procesar operaciones aritméticas y desplegar resultados utilizando displays de siete segmentos multiplexados.
@@ -462,9 +473,9 @@ síntesis lógica.
 
 Finalmente, todas las pruebas realizadas tanto en simulación como en síntesis fueron exitosas, validando el funcionamiento correcto del sistema completo.
 
-## 11. Apéndices
+## 12. Apéndices
 
-### 11.1 Apéndice A – Herramientas utilizadas
+### 12.1 Apéndice A – Herramientas utilizadas
 SystemVerilog
 Yosys
 nextpnr-gowin
@@ -473,6 +484,6 @@ GTKWave
 Icarus Verilog
 openFPGALoader
 
-### 11.2 Apéndice B – FPGA utilizada
+### 12.2 Apéndice B – FPGA utilizada
 Tang Nano 9K
 Gowin GW1NR-LV9QN88PC6/I5
