@@ -135,36 +135,17 @@ La selección se realiza mediante la tecla A.
 ## 4. Diagramas de bloques de cada subsistema
 
 ### 4.1. Sistema completo
-
 ```mermaid
-┌─────────────────────────────────────────┐
-4_filas ──────────────────►                                         ├──► Q[6:0]
-rely    ──────────────────►        keypad_scanner                   ├──► R[4:0]
-reset   ──────────────────►                                         ├──► done
-                          │   key_code[3:0] ──► ┌──────┐           │
-                          │   key_valid     ──► │ TOP  │           │
-                          └─────────────────────►      ├──► valid ──►┐
-                                               │      │            ││
-                                               │      │◄── done ───┘│
-                                               │      │             │
-                                               └──┬───┘    ┌────────┘
-                                                  │        │
-                                            D[3:0]│   ┌────▼──────────────┐
-                                        en_mask[3:0]  │  divider_pipelined│
-                                                  │   │  A[6:0], B[4:0]   │
-                                                  │   │  Q[6:0], R[4:0]   │
-                                                  │   └───────────────────┘
-                                                  │
-                                           ┌──────▼──────────┐
-                                           │  7_seg_display  │
-                                           │                 │
-                                           └──────┬──────────┘
-                                                  │ seg_7[6:0]
-                                                  │ AN[3:0]
-                                           ┌──────▼──────────┐
-                                           │  Display físico  │
-                                           │  (FPGA onboard) │
-                                           └─────────────────┘
+graph LR
+    HW1["4_filas / rely / reset"]
+
+    HW1 --> KS["keypad_scanner\nkey_code[3:0]\nkey_valid"]
+    KS -->|key_code, key_valid| TOP["TOP\nFSM + registros BCD\n+ conversión"]
+    TOP -->|valid| DP["divider_pipelined\nA[6:0], B[4:0]\nQ[6:0], R[4:0]"]
+    DP -->|done, Q, R| TOP
+    TOP -->|D[3:0], en_mask[3:0]| SD["7_seg_display\nseg_7[6:0]\nAN[3:0]"]
+    SD --> DISP["Display físico\n(FPGA onboard)"]
+    TOP -->|columnas[3:0]| HW1
 
 ```
 ---
