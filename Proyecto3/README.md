@@ -137,15 +137,32 @@ La selección se realiza mediante la tecla A.
 ### 4.1. Sistema completo
 ```mermaid
 graph LR
-    HW1["4_filas / rely / reset"]
+    A[4_filas] --> KS[keypad_scanner]
+    rely --> KS
+    reset --> KS
+    KS --> key_code
+    KS --> key_valid
+    key_code --> TOP
+    key_valid --> TOP
+    TOP --> valid
+    valid --> DP[divider_pipelined]
+    DP --> done
+    DP --> Q
+    DP --> R
+    done --> TOP
+    Q --> TOP
+    R --> TOP
+    TOP --> columnas
+    columnas --> A
+    TOP --> en_mask
+    TOP --> D[digitos]
+    en_mask --> SD[7_seg_display]
+    D --> SD
+    SD --> seg7[seg_7]
+    SD --> AN
+    seg7 --> DISP[Display fisico]
+    AN --> DISP
 
-    HW1 --> KS["keypad_scanner\nkey_code[3:0]\nkey_valid"]
-    KS -->|key_code, key_valid| TOP["TOP\nFSM + registros BCD\n+ conversión"]
-    TOP -->|valid| DP["divider_pipelined\nA[6:0], B[4:0]\nQ[6:0], R[4:0]"]
-    DP -->|done, Q, R| TOP
-    TOP -->|D[3:0], en_mask[3:0]| SD["7_seg_display\nseg_7[6:0]\nAN[3:0]"]
-    SD --> DISP["Display físico\n(FPGA onboard)"]
-    TOP -->|columnas[3:0]| HW1
 ```
 ---
 
