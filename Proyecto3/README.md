@@ -447,6 +447,7 @@ sincronización correcta,
 generación correcta del bitstream final.
 
 Imagen evidenciando el consumo total de los recursos:
+
 <img width="516" height="341" alt="image" src="https://github.com/user-attachments/assets/eb3cdbba-78e4-4042-aa04-5db555fba638" />
 
 ## 10. Reporte de velocidades
