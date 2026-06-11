@@ -140,27 +140,27 @@ graph LR
     A[4_filas] --> KS[keypad_scanner]
     reloj --> KS
     reset --> KS
-    KS --> key_code[3:0]
+    KS --> key_code
     KS --> key_valid
     key_code[3:0] --> TOP
     key_valid --> TOP
     TOP --> valid
     valid --> DP[divider_pipelined]
     DP --> done
-    DP --> Q[6:0]
-    DP --> R[4:0]
+    DP --> Q
+    DP --> R
     done --> TOP
-    Q[6:0] --> TOP
-    R[4:0] --> TOP
+    Q --> TOP
+    R --> TOP
     TOP --> columnas
     columnas --> A
-    TOP --> en_mask[3:0]
+    TOP --> en_mask
     TOP --> D[digitos]
-    en_mask[3:0] --> SD[7_seg_display]
+    en_mask --> SD[7_seg_display]
     D --> SD
-    SD --> seg7[3:0]
+    SD --> seg7
     SD --> AN
-    seg7[3:0] --> DISP[Display fisico]
+    seg7 --> DISP[Display fisico]
     AN --> DISP
 
 ```
