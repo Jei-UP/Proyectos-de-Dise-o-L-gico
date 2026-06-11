@@ -266,9 +266,71 @@ MOSTRAR_RESULTADO --> INGRESO_DIVIDENDO : tecla * o #
 
 ---
 
-## 6. Ejemplo y análisis de una simulación funcional
+## 6. Ruta de datos y control
 
-### 6.1. Caso de prueba
+### 6.1 Ruta de datos
+
+```mermaid
+graph LR
+
+    %% Entrada
+    A[Teclado Matricial 4x4]
+    B[keypad_scanner<br/>Sincronización FF<br/>Debounce 20 ms<br/>key_code / key_valid]
+
+    %% FSM
+    C[FSM Control<br/>top.sv]
+
+    %% Registros de entrada
+    D[Banco de Registros BCD<br/>n1_d2 n1_d1 n1_d0<br/>n2_d1 n2_d0]
+
+    %% Conversión entrada
+    E[BCD → Binario<br/>Dividendo 7 bits<br/>Divisor 5 bits]
+
+    %% División
+    F[divider_pipelined<br/>División No Restaurativa]
+    
+    F1[Etapa 1<br/>Bits 6-5]
+    F2[Etapa 2<br/>Bits 4-3]
+    F3[Etapa 3<br/>Bits 2-1]
+    F4[Etapa 4<br/>Bit 0]
+
+    %% Conversión salida
+    G[Binario → BCD<br/>Cociente 7 bits<br/>Residuo 5 bits]
+
+    %% Selección visualización
+    H[Mux de Display<br/>FSM + mostrar_residuo]
+
+    %% Display
+    I[seven_seg_display<br/>Multiplexado 4 Dígitos]
+    J[Display 7 Segmentos]
+
+    %% Flujo principal
+    A --> B
+    B -->|key_code, key_valid| C
+    C --> D
+    D --> E
+    E --> F
+
+    %% Pipeline interno
+    F --> F1
+    F1 --> F2
+    F2 --> F3
+    F3 --> F4
+
+    %% Resultado
+    F4 -->|Cociente, Residuo| G
+    G --> H
+    C --> H
+    H --> I
+    I --> J
+
+    %% Señal de control
+    F4 -. done .-> C
+```
+
+## 7. Ejemplo y análisis de una simulación funcional
+
+### 7.1. Caso de prueba
 
 Dividendo = 127
 
@@ -285,9 +347,9 @@ Resultado esperado:
 
 ---
 
-### 6.2. Flujo de ejecución
+### 7.2. Flujo de ejecución
 
-#### 6.2.1. Paso 1 – Ingreso del dividendo
+#### 7.2.1. Paso 1 – Ingreso del dividendo
 
 El usuario ingresa:
 
@@ -303,7 +365,7 @@ y almacena los tres dígitos.
 
 ---
 
-#### 6.2.2. Paso 2 – Confirmación
+#### 7.2.2. Paso 2 – Confirmación
 
 El usuario presiona:
 
@@ -319,7 +381,7 @@ INGRESO_DIVISOR
 
 ---
 
-#### 6.2.3. Paso 3 – Ingreso del divisor
+#### 7.2.3. Paso 3 – Ingreso del divisor
 
 El usuario introduce:
 
@@ -329,7 +391,7 @@ El usuario introduce:
 
 ---
 
-#### 6.2.4. Paso 4 – Inicio de la división
+#### 7.2.4. Paso 4 – Inicio de la división
 
 Se vuelve a presionar:
 
@@ -347,7 +409,7 @@ durante un ciclo de reloj.
 
 ---
 
-#### 6.2.5. Paso 5 – Procesamiento pipeline
+#### 7.2.5. Paso 5 – Procesamiento pipeline
 
 La operación avanza por las cuatro etapas pipeline:
 
@@ -364,7 +426,7 @@ done = 1
 
 ---
 
-#### 6.2.6. Paso 6 – Visualización
+#### 7.2.6. Paso 6 – Visualización
 
 El sistema entra en:
 
@@ -390,7 +452,7 @@ indicando residuo igual a 3.
 
 ---
 
-### 6.3. Verificación funcional
+### 7.3. Verificación funcional
 
 El testbench `tb_primera_fila.sv` valida exhaustivamente la primera fila del algoritmo restaurador.
 
@@ -418,7 +480,7 @@ La prueba no presentó errores en ninguna de las pruebas, por lo que se puede af
 <img width="618" height="811" alt="Captura de pantalla 2026-06-11 001048" src="https://github.com/user-attachments/assets/f1589e2d-2aa1-48f5-861b-21d0e66d3b0e" />
 
 
-## 7. Archivo de Constraints
+## 8. Archivo de Constraints
 El archivo pines.cst define la asignación física de pines de la FPGA Tang Nano 9K.
 
 Las señales asignadas incluyen:
@@ -432,7 +494,7 @@ segmentos del display,
 
 También se configuraron resistencias pull-down en las entradas del teclado para evitar estados flotantes.
 
-## 8. Problemas Encontrados Durante el Proyecto
+## 9. Problemas Encontrados Durante el Proyecto
 Durante el desarrollo del proyecto se encontraron varios problemas técnicos importantes:
 
 Rebotes mecánicos del teclado matricial.
@@ -448,7 +510,7 @@ Integración entre módulos.
 
 Todos los problemas fueron corregidos satisfactoriamente.
 
-## 9. Consumo de Recursos
+## 10. Consumo de Recursos
 El diseño final fue sintetizado exitosamente para la FPGA Tang Nano 9K. Hubo un consumo de 6%.
 
 La implementación cumplió correctamente con:
@@ -463,14 +525,14 @@ Imagen evidenciando el consumo total de los recursos:
 
 <img width="516" height="341" alt="image" src="https://github.com/user-attachments/assets/eb3cdbba-78e4-4042-aa04-5db555fba638" />
 
-## 10. Reporte de velocidades
+## 11. Reporte de velocidades
 Realizando el comando "make pnr" se obtuvo que la velocidad máxima que alcanzó el diseño propuesto fue de aproximadamente 62.72MHz, lo cual cumple con el objetivo de una velocidad mínima de 27MHz. Haciendo el cálculo de los tiempos, el objetivo era que no durara más de 37.04ns (según los 27MHz), y esto se logra puesto que al realizar el mismo cálculo, el tiempo es de 14.76ns, por lo que se adapta a la restricción temporal.
 Esto anterior se evidencia en la siguiente imagen:
 
 <img width="770" height="152" alt="Captura de pantalla 2026-06-11 004345" src="https://github.com/user-attachments/assets/9b359094-09d3-46cd-b6d8-4315054669cc" />
 
 
-# 11. Conclusiones
+# 12. Conclusiones
 Se logró implementar correctamente una calculadora decimal completamente funcional utilizando FPGA y SystemVerilog.
 
 El sistema permitió capturar datos desde un teclado hexadecimal matricial, procesar operaciones aritméticas y desplegar resultados utilizando displays de siete segmentos multiplexados.
@@ -487,9 +549,9 @@ síntesis lógica.
 
 Finalmente, todas las pruebas realizadas tanto en simulación como en síntesis fueron exitosas, validando el funcionamiento correcto del sistema completo.
 
-## 12. Apéndices
+## 13. Apéndices
 
-### 12.1 Apéndice A – Herramientas utilizadas
+### 13.1 Apéndice A – Herramientas utilizadas
 SystemVerilog
 Yosys
 nextpnr-gowin
@@ -498,6 +560,6 @@ GTKWave
 Icarus Verilog
 openFPGALoader
 
-### 12.2 Apéndice B – FPGA utilizada
+### 13.2 Apéndice B – FPGA utilizada
 Tang Nano 9K
 Gowin GW1NR-LV9QN88PC6/I5
