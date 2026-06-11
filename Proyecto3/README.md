@@ -328,6 +328,14 @@ graph LR
     F4 -. done .-> C
 ```
 
+
+Como se observa en el diagrama, la ruta de datos comienza en la entrada del módulo del keypad_scanner, tomando como inputs el reloj (el cual se basa en una frecuencia de 27MHz), el reset y las filas del teclado. El scanner toma las señales de filas del teclado 4x4, donde se aplican dos flip-flops para sincronizar las filas y se filtran con un antirrebote para evitar distorsión en la señal. Teniendo esto, se valida la tecla que se haya presionado y pasa al siguiente módulo.
+
+La tecla se recibe en la máquina de estados dentro del top. Esta entrada pasa por conversión a BCD, del dividendo y del divisor y ambos datos se registran para poder eventualmente ejecutar la división el cual es instanciado por el módulo de divider_pipelined donde pasa por 4 etapas. Luego al terminar este recorrido, el dato vuele a la máquina de estados.
+
+Ya por último, como se obtuvieron los datos del cociente y el residuo, estos están en notación binaria por lo que pasan por su respectiva conversión a BCD. Dentro del top hay un MUX que se encarga de escoger qué se mostrará en el display de 7 segmentos el cual está controlado por la misma FSM. Finalmente, dentro del display de 7 segmentos también hay un multiplexor que se encarga de escoger cada dígito en el orden respectivo para mostrarlo en el display físico.
+
+
 ## 7. Ejemplo y análisis de una simulación funcional
 
 ### 7.1. Caso de prueba
