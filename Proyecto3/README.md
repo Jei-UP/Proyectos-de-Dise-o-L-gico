@@ -388,10 +388,19 @@ Las pruebas realizadas incluyen:
 * Barridos completos para B = 0..31.
 * Validación automática contra un modelo de referencia.
 
-Los resultados obtenidos muestran cero errores para todos los casos probados, verificando el funcionamiento correcto de la primera etapa del divisor.
-
-Verificación que la primera fila sí funcionó por medio de comando "make test":
+Los resultados obtenidos muestran cero errores para todos los casos probados, verificando el funcionamiento correcto de la primera etapa del divisor. Esto se evidencia en la imagen donde se entrega el resultado del comando 'make test':
 <img width="563" height="586" alt="Captura de pantalla 2026-06-11 001437" src="https://github.com/user-attachments/assets/3f6f4529-975d-4836-a5b6-8e459e77afcf" />
+
+Para el testbench `tb_pipeline.sv` más bien se encarga de verificar que el pipeline creado sí funcione de manera correcta.
+
+Para ello se probó que:
+* Para diferentes valores de dividendos y divisores, se realice la división efectivamente.
+* Entregar valores de cociente y residuo.
+* Funcionamiento correcto, no se mezclan datos y se entregan los datos según se piden.
+* Verifica latencia de 4 ciclos.
+* Se hace reset de los valores.
+
+La prueba no presentó errores en ninguna de las pruebas, por lo que se puede afirmar que el sistema está funcionando correctamente, y esto se puede observar en la siguiente imagen:
 
 
 
