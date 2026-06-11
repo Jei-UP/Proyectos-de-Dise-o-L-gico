@@ -268,7 +268,7 @@ MOSTRAR_RESULTADO --> INGRESO_DIVIDENDO : tecla * o #
 
 ## 6. Ruta de datos y control
 
-### 6.1 Ruta de datos
+### 6.1. Ruta de datos
 
 ```mermaid
 graph LR
@@ -335,6 +335,41 @@ La tecla se recibe en la máquina de estados dentro del top. Esta entrada pasa p
 
 Ya por último, como se obtuvieron los datos del cociente y el residuo, estos están en notación binaria por lo que pasan por su respectiva conversión a BCD. Dentro del top hay un MUX que se encarga de escoger qué se mostrará en el display de 7 segmentos el cual está controlado por la misma FSM. Finalmente, dentro del display de 7 segmentos también hay un multiplexor que se encarga de escoger cada dígito en el orden respectivo para mostrarlo en el display físico.
 
+
+### 6.2. Ruta control
+
+```mermaid
+graph LR
+
+    SC[keypad_scanner]
+    FSM[FSM de Control]
+    DIV[divider_pipelined]
+    DISP[Control de Display]
+
+    SC -->|key_valid,key_code| FSM
+    FSM -->|div_valid| DIV
+    DIV -->|div_done| FSM
+    FSM -->|en_mask| DISP
+    FSM -->|mostrar_residuo| DISP
+
+    subgraph Estados
+        S1[INGRESO_DIVIDENDO]
+        S2[INGRESO_DIVISOR]
+        S3[START_DIV]
+        S4[WAIT_DIV]
+        S5[MOSTRAR_RESULTADO]
+    end
+
+    FSM --- S1
+    FSM --- S2
+    FSM --- S3
+    FSM --- S4
+    FSM --- S5
+```
+
+
+
+Después 
 
 ## 7. Ejemplo y análisis de una simulación funcional
 
