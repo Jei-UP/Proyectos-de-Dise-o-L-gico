@@ -402,7 +402,7 @@ Para ello se probó que:
 
 La prueba no presentó errores en ninguna de las pruebas, por lo que se puede afirmar que el sistema está funcionando correctamente, y esto se puede observar en la siguiente imagen:
 
-
+<img width="618" height="811" alt="Captura de pantalla 2026-06-11 001048" src="https://github.com/user-attachments/assets/f1589e2d-2aa1-48f5-861b-21d0e66d3b0e" />
 
 
 ## 7. Archivo de Constraints
