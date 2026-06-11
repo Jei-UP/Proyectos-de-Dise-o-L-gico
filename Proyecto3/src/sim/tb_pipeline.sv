@@ -5,8 +5,9 @@ module tb_pipeline;
     // =========================================================================
     // Parámetros
     // =========================================================================
-    localparam CLK_PERIOD  = 10;   // 10 ns → 100 MHz
-    localparam PIPE_STAGES = 4;    // Latencia del pipeline
+    localparam CLK_PERIOD  = 10;
+    localparam PIPE_STAGES = 4;
+    localparam NUM_TESTS   = 6;
 
     // =========================================================================
     // Señales del DUT
@@ -14,10 +15,10 @@ module tb_pipeline;
     logic        clk;
     logic        rst_n;
     logic        valid;
-    logic [6:0]  A;       // Dividendo (7 bits, máx 127)
-    logic [4:0]  B;       // Divisor  (5 bits, máx 31)
-    logic [6:0]  Q;       // Cociente
-    logic [4:0]  R;       // Residuo
+    logic [6:0]  A;
+    logic [4:0]  B;
+    logic [6:0]  Q;
+    logic [4:0]  R;
     logic        done;
 
     // =========================================================================
@@ -37,233 +38,183 @@ module tb_pipeline;
     // =========================================================================
     // Generador de reloj
     // =========================================================================
-    initial clk = 0; 
+    initial clk = 0;
     always #(CLK_PERIOD/2) clk = ~clk;
 
     // =========================================================================
-    // Estructura para casos de prueba
+    // Casos de prueba como arrays paralelos
     // =========================================================================
-    typedef struct {
-        logic [6:0] dividendo;
-        logic [4:0] divisor;
-        logic [6:0] cociente_esp;
-        logic [4:0] residuo_esp;
-        string      descripcion;
-    } test_case_t;
+    logic [6:0] tc_A   [NUM_TESTS] = '{7'd20, 7'd20, 7'd0,  7'd7,  7'd5,  7'd127};
+    logic [4:0] tc_B   [NUM_TESTS] = '{5'd4,  5'd3,  5'd7,  5'd1,  5'd31, 5'd31 };
+    logic [6:0] tc_Q   [NUM_TESTS] = '{7'd5,  7'd6,  7'd0,  7'd7,  7'd0,  7'd4  };
+    logic [4:0] tc_R   [NUM_TESTS] = '{5'd0,  5'd2,  5'd0,  5'd0,  5'd5,  5'd3  };
 
     // =========================================================================
-    // Definición de casos de prueba
+    // Variables de control
     // =========================================================================
-    // Se cubren: divisiones exactas, con residuo, cero, divisor mayor,
-    // valores máximos y mínimos, y potencias de 2.
-    // =========================================================================
-    localparam int NUM_TESTS = 6;
-
-    test_case_t casos[NUM_TESTS] = '{
-        // dividendo, divisor, cociente_esp, residuo_esp, descripción
-        '{7'd20,  5'd4,  7'd5,  5'd0,  "División exacta simple"},
-        '{7'd20,  5'd3,  7'd6,  5'd2,  "División con residuo"},
-        '{7'd0,   5'd7,  7'd0,  5'd0,  "Dividendo = 0"},
-        '{7'd7,   5'd1,  7'd7,  5'd0,  "Divisor = 1"},
-        '{7'd5,   5'd31, 7'd0,  5'd5,  "Divisor > dividendo"},
-        '{7'd127, 5'd31, 7'd4,  5'd3,  "Valores máximos (127÷31)"}
-    };
-
-    // =========================================================================
-    // Variables de seguimiento
-    // =========================================================================
-    int tests_pasados = 0;
-    int tests_fallidos = 0;
-
-    // Cola para rastrear qué caso de prueba corresponde a cada resultado
-    // (necesario porque el pipeline introduce 4 ciclos de latencia)
-    typedef struct {
-        logic [6:0] cociente_esp;
-        logic [4:0] residuo_esp;
-        string      descripcion;
-        int         ciclo_envio;
-    } pending_t;
-
-    pending_t cola_pendientes[$];
-
-    // =========================================================================
-    // Tarea: aplicar un caso de prueba al DUT
-    // =========================================================================
-    task automatic aplicar_entrada(input test_case_t tc, input int ciclo_actual);
-        @(posedge clk);
-        #1; // Pequeño delay para evitar conflictos con el flanco
-        A     = tc.dividendo;
-        B     = tc.divisor;
-        valid = 1'b1;
-        cola_pendientes.push_back('{
-            cociente_esp: tc.cociente_esp,
-            residuo_esp:  tc.residuo_esp,
-            descripcion:  tc.descripcion,
-            ciclo_envio:  ciclo_actual
-        });
-        $display("[CICLO %0d] ENTRADA  → A=%0d  B=%0d  | Caso: %s",
-                 ciclo_actual, tc.dividendo, tc.divisor, tc.descripcion);
-    endtask
-
-    // =========================================================================
-    // Tarea: verificar resultado cuando done=1
-    // =========================================================================
-    task automatic verificar_resultado(input int ciclo_actual);
-        pending_t caso;
-        caso = cola_pendientes.pop_front();
-
-        if (Q === caso.cociente_esp && R === caso.residuo_esp) begin
-            $display("[CICLO %0d] ✓ PASS  → Q=%0d  R=%0d  | %s",
-                     ciclo_actual, Q, R, caso.descripcion);
-            tests_pasados++;
-        end else begin
-            $display("[CICLO %0d] ✗ FAIL  → Q=%0d (esp %0d)  R=%0d (esp %0d)  | %s",
-                     ciclo_actual, Q, caso.cociente_esp, R, caso.residuo_esp,
-                     caso.descripcion);
-            tests_fallidos++;
-        end
-    endtask
-
-    // =========================================================================
-    // Flujo principal del testbench
-    // =========================================================================
+    int tests_pasados;
+    int tests_fallidos;
+    int idx_resultado;   // Índice del próximo resultado esperado
     int ciclo;
 
+    // =========================================================================
+    // Flujo principal
+    // =========================================================================
     initial begin
-        // ------------------------------------------------------------
-        // Inicialización
-        // ------------------------------------------------------------
         $display("============================================================");
-        $display("   TESTBENCH: divider_pipelined (Pipeline de %0d etapas)   ", PIPE_STAGES);
-        $display("   Dividendo: 7 bits | Divisor: 5 bits                      ");
+        $display("  TESTBENCH: divider_pipelined  (Pipeline %0d etapas)", PIPE_STAGES);
+        $display("  Dividendo: 7 bits | Divisor: 5 bits");
         $display("============================================================");
 
-        rst_n = 1'b0;
-        valid = 1'b0;
-        A     = 7'b0;
-        B     = 5'b0;
-        ciclo = 0;
+        // --- Inicialización ---
+        rst_n         = 1'b0;
+        valid         = 1'b0;
+        A             = 7'b0;
+        B             = 5'b0;
+        tests_pasados = 0;
+        tests_fallidos= 0;
+        idx_resultado = 0;
+        ciclo         = 0;
 
-        // ------------------------------------------------------------
-        // Reset durante 3 ciclos
-        // ------------------------------------------------------------
+        // --- Reset 3 ciclos ---
         repeat(3) @(posedge clk);
         #1;
         rst_n = 1'b1;
-        $display("\n[CICLO  0] Reset liberado\n");
+        $display("\n[CICLO %0d] Reset liberado\n", ciclo);
 
-        // ------------------------------------------------------------
-        // FASE 1: Enviar todos los casos de prueba (uno por ciclo)
-        // ------------------------------------------------------------
+        // -------------------------------------------------------
+        // FASE 1: Enviar los 6 casos (uno por ciclo)
+        // -------------------------------------------------------
         for (int i = 0; i < NUM_TESTS; i++) begin
+            @(posedge clk);
             ciclo++;
-            aplicar_entrada(casos[i], ciclo);
+            #1;
+            A     = tc_A[i];
+            B     = tc_B[i];
+            valid = 1'b1;
+            $display("[CICLO %0d] ENTRADA -> A=%0d  B=%0d",
+                     ciclo, tc_A[i], tc_B[i]);
         end
 
-        // ------------------------------------------------------------
-        // Desactivar valid tras el último dato
-        // ------------------------------------------------------------
+        // Desactivar valid
         @(posedge clk);
+        ciclo++;
         #1;
         valid = 1'b0;
         A     = 7'b0;
         B     = 5'b0;
-        ciclo++;
 
-        // ------------------------------------------------------------
-        // FASE 2: Esperar y capturar resultados cuando done=1
-        // Se espera el primer resultado PIPE_STAGES ciclos después
-        // del primer dato enviado.
-        // ------------------------------------------------------------
-        $display("\n--- Esperando resultados del pipeline ---\n");
-
-        // Esperar hasta que llegue el primer done
-        // (PIPE_STAGES ciclos después del primer envío)
+        // -------------------------------------------------------
+        // FASE 2: Esperar primer resultado
+        // El primer done llega PIPE_STAGES ciclos después del
+        // primer dato enviado.
+        // -------------------------------------------------------
+        $display("\n--- Esperando resultados ---\n");
         repeat(PIPE_STAGES - 1) begin
             @(posedge clk);
             ciclo++;
         end
 
-        // Capturar un resultado por ciclo mientras haya pendientes
-        while (cola_pendientes.size() > 0) begin
+        // -------------------------------------------------------
+        // Capturar un resultado por ciclo
+        // -------------------------------------------------------
+        while (idx_resultado < NUM_TESTS) begin
             @(posedge clk);
             ciclo++;
+
             if (done) begin
-                verificar_resultado(ciclo);
+                if (Q === tc_Q[idx_resultado] && R === tc_R[idx_resultado]) begin
+                    $display("[CICLO %0d] PASS -> A=%0d B=%0d | Q=%0d R=%0d",
+                             ciclo,
+                             tc_A[idx_resultado], tc_B[idx_resultado],
+                             Q, R);
+                    tests_pasados++;
+                end else begin
+                    $display("[CICLO %0d] FAIL -> A=%0d B=%0d | Q=%0d(esp %0d)  R=%0d(esp %0d)",
+                             ciclo,
+                             tc_A[idx_resultado], tc_B[idx_resultado],
+                             Q, tc_Q[idx_resultado],
+                             R, tc_R[idx_resultado]);
+                    tests_fallidos++;
+                end
+                idx_resultado++;
             end else begin
-                $display("[CICLO %0d] WARNING: done=0 cuando se esperaba resultado", ciclo);
+                $display("[CICLO %0d] WARNING: done=0 inesperado", ciclo);
             end
         end
 
-        // Esperar un ciclo adicional para verificar que done vuelve a 0
+        // -------------------------------------------------------
+        // Verificar que done vuelve a 0
+        // -------------------------------------------------------
         @(posedge clk);
         ciclo++;
-        if (!done) begin
-            $display("[CICLO %0d] ✓ done=0 correctamente después del último resultado", ciclo);
-        end else begin
-            $display("[CICLO %0d] ✗ WARN: done=1 sin datos pendientes", ciclo);
-        end
+        if (!done)
+            $display("[CICLO %0d] OK: done=0 tras ultimo resultado", ciclo);
+        else
+            $display("[CICLO %0d] WARN: done=1 sin datos pendientes", ciclo);
 
-        // ------------------------------------------------------------
-        // PRUEBA EXTRA: Reset en medio de una operación
-        // ------------------------------------------------------------
-        $display("\n--- Prueba extra: Reset en medio de operación ---\n");
+        // -------------------------------------------------------
+        // PRUEBA EXTRA: Reset en medio de operación
+        // -------------------------------------------------------
+        $display("\n--- Prueba extra: Reset en medio de operacion ---\n");
         @(posedge clk); ciclo++;
         #1;
         A     = 7'd50;
         B     = 5'd5;
         valid = 1'b1;
-        $display("[CICLO %0d] Enviando dato y luego reseteando...", ciclo);
+        $display("[CICLO %0d] Enviando dato antes de reset...", ciclo);
 
         @(posedge clk); ciclo++;
         #1;
-        rst_n = 1'b0;  // Reset durante operación
+        rst_n = 1'b0;
         valid = 1'b0;
 
         @(posedge clk); ciclo++;
         #1;
         rst_n = 1'b1;
-        $display("[CICLO %0d] Reset aplicado y liberado", ciclo);
+        $display("[CICLO %0d] Reset liberado", ciclo);
 
-        // Verificar que Q, R y done son 0 tras reset
-        repeat(PIPE_STAGES + 1) @(posedge clk);
-        ciclo += PIPE_STAGES + 1;
+        repeat(PIPE_STAGES + 1) begin
+            @(posedge clk);
+            ciclo++;
+        end
+
         if (done === 1'b0 && Q === 7'b0 && R === 5'b0) begin
-            $display("[CICLO %0d] ✓ Reset correcto: Q=0, R=0, done=0", ciclo);
+            $display("[CICLO %0d] PASS: Reset correcto -> Q=0 R=0 done=0", ciclo);
             tests_pasados++;
         end else begin
-            $display("[CICLO %0d] ✗ Reset fallido: Q=%0d, R=%0d, done=%0b",
+            $display("[CICLO %0d] FAIL: Reset incorrecto -> Q=%0d R=%0d done=%0b",
                      ciclo, Q, R, done);
             tests_fallidos++;
         end
 
-        // ------------------------------------------------------------
-        // Resumen final
-        // ------------------------------------------------------------
+        // -------------------------------------------------------
+        // Resumen
+        // -------------------------------------------------------
         $display("\n============================================================");
-        $display("   RESUMEN FINAL");
-        $display("   Tests pasados : %0d / %0d", tests_pasados, NUM_TESTS + 1); // +1 por prueba de reset
-        $display("   Tests fallidos: %0d / %0d", tests_fallidos, NUM_TESTS + 1);
+        $display("  RESUMEN FINAL");
+        $display("  Tests pasados : %0d / %0d", tests_pasados,  NUM_TESTS + 1);
+        $display("  Tests fallidos: %0d / %0d", tests_fallidos, NUM_TESTS + 1);
         if (tests_fallidos == 0)
-            $display("   *** TODOS LOS TESTS PASARON ✓ ***");
+            $display("  *** TODOS LOS TESTS PASARON ***");
         else
-            $display("   *** ATENCIÓN: %0d TEST(S) FALLARON ***", tests_fallidos);
+            $display("  *** %0d TEST(S) FALLARON ***", tests_fallidos);
         $display("============================================================\n");
 
         $finish;
     end
 
     // =========================================================================
-    // Timeout de seguridad (evita simulaciones infinitas)
+    // Timeout de seguridad
     // =========================================================================
     initial begin
         #(CLK_PERIOD * 200);
-        $display("[ERROR] Timeout: la simulación excedió el tiempo máximo.");
+        $display("[ERROR] Timeout: simulacion excedio el tiempo maximo.");
         $finish;
     end
 
     // =========================================================================
-    // Dump de ondas (compatible con VCD estándar)
+    // Dump de ondas
     // =========================================================================
     initial begin
         $dumpfile("tb_pipeline.vcd");
