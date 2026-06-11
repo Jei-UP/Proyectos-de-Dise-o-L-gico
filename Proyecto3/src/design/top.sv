@@ -74,7 +74,7 @@ module top (
                                 state   <= INGRESO_DIVISOR;
                                 en_mask <= 4'b0000; 
                             end
-                            // LISTA EXPLÍCITA (Estilo robusto del Proyecto II)
+                            // LISTA EXPLÍCITA
                             4'h0, 4'h1, 4'h2, 4'h3, 4'h4, 4'h5, 4'h6, 4'h7, 4'h8, 4'h9: begin
                                 en_mask <= {en_mask[2:0], 1'b1};
                                 n1_d2   <= n1_d1;
