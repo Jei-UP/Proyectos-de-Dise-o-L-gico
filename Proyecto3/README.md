@@ -340,31 +340,22 @@ Ya por último, como se obtuvieron los datos del cociente y el residuo, estos es
 
 ```mermaid
 graph LR
+    A[Ingreso dividendo] -->|# enter| B[Ingreso divisor]
+    A -->|digito 0-9 / clear| A
+    B -->|digito 0-9 / clear| B
+    B -->|# calcular| C[Start div]
+    C -->|next clk| D[Wait div]
+    D -->|not done| D
+    D -->|done| E[Mostrar resultado]
+    E -->|A: toggle residuo| E
+    E -->|clear o enter| A
 
-    SC[keypad_scanner]
-    FSM[FSM de Control]
-    DIV[divider_pipelined]
-    DISP[Control de Display]
+    style A fill:#CECBF6,stroke:#534AB7
+    style B fill:#CECBF6,stroke:#534AB7
+    style C fill:#F5C4B3,stroke:#993C1D
+    style D fill:#F5C4B3,stroke:#993C1D
+    style E fill:#9FE1CB,stroke:#0F6E56
 
-    SC -->|key_valid,key_code| FSM
-    FSM -->|div_valid| DIV
-    DIV -->|div_done| FSM
-    FSM -->|en_mask| DISP
-    FSM -->|mostrar_residuo| DISP
-
-    subgraph Estados
-        S1[INGRESO_DIVIDENDO]
-        S2[INGRESO_DIVISOR]
-        S3[START_DIV]
-        S4[WAIT_DIV]
-        S5[MOSTRAR_RESULTADO]
-    end
-
-    FSM --- S1
-    FSM --- S2
-    FSM --- S3
-    FSM --- S4
-    FSM --- S5
 ```
 
 
