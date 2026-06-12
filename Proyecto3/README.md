@@ -368,9 +368,11 @@ graph LR
 
 ```
 
+Para comenzar con el divisor, en los estados de INGRESO_DIVIDENDO e INGRESO_DIVISOR se capturan los dígitos que vienen desde el teclado mediante shift registers BCD. En ambos estados, las lógicas de en_mask y div_valid se ajustan según la cantidad de dígitos. Asimismo, la tecla (*) del teclado hexadecimal limpia los números en caso de que se haya escrito uno mal mientras que la tecla (#) más bien avanza, de forma que primero se escribe el dividendo y al presionar esa tecla se pasa a escribir el divisor para iniciar la división.
 
+Cuando pasamos al estado de START_DIV se genera un pulso de un ciclo cuando div_valid=1 para así disparar el módulo de divider_pipelined e immediatamente se pasa al estado de WAIT_DIV. Este estado se encarga de "apagar" el display y permanece en un loop hasta que div_done se cumpla y pase al estado de MOSTRAR_RESULTADO.
 
-Después 
+Por último, en el estado MOSTRAR_RESULTADO se activan todos los displays para mostrar primero el cociente de la división en BCD. Con la tecla (A) se conmuta el flip-flop de mostrar_residuo y así en el MUX se selecciona el residuo para mostrarlo en el display. Finalmente, presionando la tecla de (*) se devuelve al inicio para ingresar una división nueva (dividendo y el divisor).
 
 ## 7. Ejemplo y análisis de una simulación funcional
 
