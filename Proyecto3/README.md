@@ -1,5 +1,7 @@
-# Nombre del proyecto
+# Nombre del proyecto e Integrantes
 División de enteros en FPGA con Teclado Matricial y Display de 7 Segmentos
+
+Andrés Rojas Víquez, Noah Gutierrez Valerín, Jason Enrique Ulloa Picado
 
 ## 1. Abreviaturas y definiciones
 - FPGA: Field Programmable Gate Array.
