@@ -557,7 +557,7 @@ Integración entre módulos.
 Todos los problemas fueron corregidos satisfactoriamente.
 
 ## 10. Consumo de Recursos
-El diseño final fue sintetizado exitosamente para la FPGA Tang Nano 9K. Hubo un consumo de 6%.
+El diseño final fue sintetizado exitosamente para la FPGA Tang Nano 9K. Hubo un consumo de 24%.
 
 La implementación cumplió correctamente con:
 
